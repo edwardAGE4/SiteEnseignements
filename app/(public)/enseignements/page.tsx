@@ -1,0 +1,79 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
+import { Container } from "@/components/ui/Container";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { SearchAndFilters } from "@/components/public/SearchAndFilters";
+import { TeachingGrid } from "@/components/public/TeachingGrid";
+import { Pagination } from "@/components/public/Pagination";
+import { listTeachings, type TeachingFormat, type TeachingSort } from "@/lib/teachings";
+import { listCategoriesWithCounts } from "@/lib/categories";
+
+export const revalidate = 30;
+
+export const metadata: Metadata = {
+  title: "Enseignements",
+  description: "Explorez la bibliotheque des enseignements du Pasteur Jean-Marc GNALI : videos, audios et documents.",
+  alternates: { canonical: "/enseignements" },
+};
+
+type SearchParams = {
+  q?: string;
+  categorie?: string;
+  format?: string;
+  tri?: string;
+  page?: string;
+};
+
+export default async function TeachingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
+  const page = Number(params.page ?? "1") || 1;
+
+  const [{ items, total, pageCount }, categories] = await Promise.all([
+    listTeachings({
+      query: params.q,
+      categorySlug: params.categorie,
+      format: params.format as TeachingFormat | undefined,
+      sort: params.tri as TeachingSort | undefined,
+      page,
+    }),
+    listCategoriesWithCounts(),
+  ]);
+
+  return (
+    <div className="pt-32">
+      <Container className="pb-16">
+        <SectionHeading eyebrow="Bibliotheque" title="Tous les enseignements" />
+        <p className="mt-4 max-w-xl text-ink-500">
+          {total} enseignement{total > 1 ? "s" : ""} disponible{total > 1 ? "s" : ""}.
+        </p>
+      </Container>
+
+      <Container className="pb-12">
+        <Suspense fallback={null}>
+          <SearchAndFilters categories={categories} />
+        </Suspense>
+      </Container>
+
+      <Container className="pb-28">
+        <TeachingGrid teachings={items} />
+        <div className="mt-16">
+          <Pagination
+            page={page}
+            pageCount={pageCount}
+            basePath="/enseignements"
+            searchParams={{
+              q: params.q,
+              categorie: params.categorie,
+              format: params.format,
+              tri: params.tri,
+            }}
+          />
+        </div>
+      </Container>
+    </div>
+  );
+}
