@@ -46,3 +46,6 @@ next-env.d.ts
 
 # fichiers uploades en developpement local (STORAGE_PROVIDER=local)
 /public/uploads/
+
+# exports de donnees (contiennent des donnees sensibles)
+/exports/
