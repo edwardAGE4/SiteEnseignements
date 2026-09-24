@@ -4,7 +4,21 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { isRateLimited } from "@/lib/rate-limit";
 
+const authSecret = process.env.AUTH_SECRET?.trim() || process.env.NEXTAUTH_SECRET?.trim() || undefined;
+
+if (!authSecret && process.env.NODE_ENV === "production") {
+  // Aide au diagnostic sur l'hebergeur : on liste uniquement les NOMS des
+  // variables liees a l'authentification (jamais leurs valeurs).
+  const authVariableNames = Object.keys(process.env).filter((name) => /AUTH|SECRET/i.test(name));
+  console.error(
+    `[auth] AUTH_SECRET absent ou vide dans cet environnement (${process.env.VERCEL_ENV ?? "inconnu"}). ` +
+      `Variables detectees : ${authVariableNames.join(", ") || "aucune"}. ` +
+      "Ajoutez AUTH_SECRET dans les variables d'environnement de l'hebergeur puis redeployez.",
+  );
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret: authSecret,
   trustHost: true,
   session: { strategy: "jwt" },
   pages: {
