@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito, Poppins, Quicksand, Manrope } from "next/font/google";
 import "./globals.css";
+import { getSiteUrl } from "@/lib/site-url";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -27,7 +28,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: "Pasteur Jean-Marc GNALI — Enseignements",
     template: "%s — Pasteur Jean-Marc GNALI",

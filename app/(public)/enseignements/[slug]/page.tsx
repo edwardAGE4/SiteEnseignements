@@ -12,6 +12,7 @@ import { TeachingGrid } from "@/components/public/TeachingGrid";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getTeachingBySlug, getRelatedTeachings } from "@/lib/teachings";
 import { formatDate } from "@/lib/utils";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const revalidate = 30;
 
@@ -52,7 +53,7 @@ export default async function TeachingDetailPage({
   const categoryIds = teaching.categories.map((c) => c.categoryId);
   const related = await getRelatedTeachings(teaching.id, categoryIds, 3);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = getSiteUrl();
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": teaching.youtubeUrl ? "VideoObject" : teaching.spotifyUrl ? "PodcastEpisode" : "Article",
