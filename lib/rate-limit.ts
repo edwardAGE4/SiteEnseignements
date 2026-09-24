@@ -26,3 +26,23 @@ export function isRateLimited(key: string, windowMs = WINDOW_MS): boolean {
 
   return false;
 }
+
+const bursts = new Map<string, number[]>();
+
+/**
+ * Limite a `max` requetes par fenetre glissante de `windowMs` (ex. 10 envois
+ * par minute), contrairement a isRateLimited qui impose un delai entre deux appels.
+ */
+export function exceedsRate(key: string, max: number, windowMs: number): boolean {
+  const now = Date.now();
+  const recent = (bursts.get(key) ?? []).filter((timestamp) => now - timestamp < windowMs);
+
+  if (recent.length >= max) {
+    bursts.set(key, recent);
+    return true;
+  }
+
+  recent.push(now);
+  bursts.set(key, recent);
+  return false;
+}

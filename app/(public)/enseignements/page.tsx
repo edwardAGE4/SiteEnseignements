@@ -5,7 +5,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SearchAndFilters } from "@/components/public/SearchAndFilters";
 import { TeachingGrid } from "@/components/public/TeachingGrid";
 import { Pagination } from "@/components/public/Pagination";
-import { listTeachings, type TeachingFormat, type TeachingSort } from "@/lib/teachings";
+import { listTeachings, parseFormats, parseListParam, type TeachingSort } from "@/lib/teachings";
 import { listCategoriesWithCounts } from "@/lib/categories";
 
 export const revalidate = 30;
@@ -35,8 +35,8 @@ export default async function TeachingsPage({
   const [{ items, total, pageCount }, categories] = await Promise.all([
     listTeachings({
       query: params.q,
-      categorySlug: params.categorie,
-      format: params.format as TeachingFormat | undefined,
+      categorySlugs: parseListParam(params.categorie),
+      formats: parseFormats(params.format),
       sort: params.tri as TeachingSort | undefined,
       page,
     }),

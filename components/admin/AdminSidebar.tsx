@@ -12,6 +12,7 @@ const LINKS: { href: string; label: string; exact?: boolean }[] = [
 
 const ADMIN_ONLY_LINKS: { href: string; label: string; exact?: boolean }[] = [
   { href: "/admin/utilisateurs", label: "Utilisateurs" },
+  { href: "/admin/parametres", label: "Parametres" },
 ];
 
 export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {

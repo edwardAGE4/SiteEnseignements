@@ -3,22 +3,45 @@ import type { Prisma } from "@/generated/prisma/client";
 
 export const PAGE_SIZE = 9;
 
-export type TeachingFormat = "youtube" | "spotify" | "pdf";
+export const TEACHING_FORMATS = ["youtube", "spotify", "pdf"] as const;
+export type TeachingFormat = (typeof TEACHING_FORMATS)[number];
 export type TeachingSort = "recent" | "popular" | "alpha";
 
 export type TeachingListParams = {
   query?: string;
-  categorySlug?: string;
-  format?: TeachingFormat;
+  /** Enseignements appartenant a au moins une de ces categories. */
+  categorySlugs?: string[];
+  /** Enseignements disponibles dans au moins un de ces formats. */
+  formats?: TeachingFormat[];
   sort?: TeachingSort;
   page?: number;
 };
 
+/** Lit un parametre d'URL multi-valeurs ("foi,famille") en liste. */
+export function parseListParam(value: string | undefined): string[] {
+  return (value ?? "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+export function parseFormats(value: string | undefined): TeachingFormat[] {
+  return parseListParam(value).filter((item): item is TeachingFormat =>
+    (TEACHING_FORMATS as readonly string[]).includes(item),
+  );
+}
+
+const FORMAT_CONDITIONS: Record<TeachingFormat, Prisma.TeachingWhereInput> = {
+  youtube: { youtubeUrl: { not: null } },
+  spotify: { spotifyUrl: { not: null } },
+  pdf: { documents: { some: {} } },
+};
+
 function buildWhere({
   query,
-  categorySlug,
-  format,
-}: Pick<TeachingListParams, "query" | "categorySlug" | "format">): Prisma.TeachingWhereInput {
+  categorySlugs,
+  formats,
+}: Pick<TeachingListParams, "query" | "categorySlugs" | "formats">): Prisma.TeachingWhereInput {
   const where: Prisma.TeachingWhereInput = {
     status: "PUBLISHED",
   };
@@ -31,15 +54,15 @@ function buildWhere({
     ];
   }
 
-  if (categorySlug) {
+  if (categorySlugs?.length) {
     where.categories = {
-      some: { category: { slug: categorySlug } },
+      some: { category: { slug: { in: categorySlugs } } },
     };
   }
 
-  if (format === "youtube") where.youtubeUrl = { not: null };
-  if (format === "spotify") where.spotifyUrl = { not: null };
-  if (format === "pdf") where.pdfUrl = { not: null };
+  if (formats?.length) {
+    where.AND = [{ OR: formats.map((format) => FORMAT_CONDITIONS[format]) }];
+  }
 
   return where;
 }
@@ -92,7 +115,11 @@ export async function getLatestTeachings(take = 3) {
 export async function getTeachingBySlug(slug: string) {
   return prisma.teaching.findFirst({
     where: { slug, status: "PUBLISHED" },
-    include: { categories: { include: { category: true } }, createdBy: true },
+    include: {
+      categories: { include: { category: true } },
+      createdBy: true,
+      documents: { orderBy: { order: "asc" } },
+    },
   });
 }
 

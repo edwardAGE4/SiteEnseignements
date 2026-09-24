@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { uploadFile } from "@/lib/storage";
 import { isPdfBuffer, validatePdfUpload } from "@/lib/file-validation";
-import { isRateLimited } from "@/lib/rate-limit";
+import { exceedsRate } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -10,8 +10,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Non autorise." }, { status: 401 });
   }
 
-  if (isRateLimited(`upload-pdf:${session.user.id}`, 2_000)) {
-    return NextResponse.json({ error: "Veuillez patienter avant un nouvel envoi." }, { status: 429 });
+  if (exceedsRate(`upload-pdf:${session.user.id}`, 30, 60_000)) {
+    return NextResponse.json({ error: "Trop d'envois en peu de temps. Patientez une minute." }, { status: 429 });
   }
 
   const formData = await request.formData();

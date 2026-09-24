@@ -1,7 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
+import { submitWithoutReset } from "@/lib/form";
 import type { UserFormState } from "@/app/admin/(dashboard)/utilisateurs/actions";
+import { FormAlerts } from "@/components/ui/Alert";
+import { PasswordInput } from "@/components/ui/PasswordInput";
+import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
 
 type Mode = "create" | "edit";
 
@@ -14,16 +18,20 @@ export function UserForm({
   mode: Mode;
   action: (prevState: UserFormState, formData: FormData) => Promise<UserFormState>;
   defaults?: { name: string; email?: string; role: "ADMIN" | "EDITOR"; isActive?: boolean };
-  onSuccess?: () => void;
+  onSuccess?: (result: UserFormState) => void;
 }) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [state, formAction, isPending] = useActionState(async (prev: UserFormState, formData: FormData) => {
     const result = await action(prev, formData);
-    if (!result?.error) onSuccess?.();
+    if (!result?.error) {
+      onSuccess?.(result);
+      if (mode === "create") formRef.current?.reset();
+    }
     return result;
   }, undefined);
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form ref={formRef} onSubmit={submitWithoutReset(formAction)} className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label className="font-data text-xs font-medium uppercase tracking-wide text-ink-500">Nom</label>
@@ -60,11 +68,11 @@ export function UserForm({
           <label className="font-data text-xs font-medium uppercase tracking-wide text-ink-500">
             {mode === "create" ? "Mot de passe" : "Nouveau mot de passe (optionnel)"}
           </label>
-          <input
+          <PasswordInput
             name="password"
-            type="password"
             required={mode === "create"}
             minLength={8}
+            autoComplete="new-password"
             className={inputClass}
           />
           {state?.fieldErrors?.password ? <p className="text-xs text-red-600">{state.fieldErrors.password}</p> : null}
@@ -78,15 +86,20 @@ export function UserForm({
         </label>
       ) : null}
 
-      {state?.error ? <p className="text-sm text-red-600">{state.error}</p> : null}
+      <FormAlerts state={state} />
 
-      <button
-        type="submit"
+      <ConfirmSubmitButton
         disabled={isPending}
+        title={mode === "create" ? "Creer cet utilisateur ?" : "Mettre a jour cet utilisateur ?"}
+        description={
+          mode === "create"
+            ? "Un nouveau compte va etre enregistre en base de donnees."
+            : "Les modifications de ce compte vont etre enregistrees en base de donnees."
+        }
         className="rounded-full bg-navy-900 px-5 py-2.5 font-data text-sm font-medium text-ivory-100 hover:bg-navy-800 disabled:opacity-60"
       >
         {isPending ? "..." : mode === "create" ? "Creer l'utilisateur" : "Mettre a jour"}
-      </button>
+      </ConfirmSubmitButton>
     </form>
   );
 }

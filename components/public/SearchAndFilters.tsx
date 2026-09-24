@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState, useTransition } from "react";
 import { cn } from "@/lib/utils";
+import { MultiSelect } from "@/components/ui/MultiSelect";
 
 type Category = { slug: string; name: string };
 
@@ -17,6 +18,11 @@ const SORTS: { value: string; label: string }[] = [
   { value: "popular", label: "Plus consultes" },
   { value: "alpha", label: "Alphabetique" },
 ];
+
+/** Les filtres multiples sont stockes dans l'URL separes par des virgules. */
+function splitParam(value: string | null) {
+  return value ? value.split(",").filter(Boolean) : [];
+}
 
 export function SearchAndFilters({ categories }: { categories: Category[] }) {
   const router = useRouter();
@@ -43,12 +49,20 @@ export function SearchAndFilters({ categories }: { categories: Category[] }) {
     updateParam("q", query || null);
   }
 
-  const activeCategory = searchParams.get("categorie");
-  const activeFormat = searchParams.get("format");
+  function resetFilters() {
+    setQuery("");
+    startTransition(() => {
+      router.push(activeSort === "recent" ? pathname : `${pathname}?tri=${activeSort}`);
+    });
+  }
+
+  const activeCategories = splitParam(searchParams.get("categorie"));
+  const activeFormats = splitParam(searchParams.get("format"));
   const activeSort = searchParams.get("tri") ?? "recent";
+  const hasFilters = Boolean(searchParams.get("q") || activeCategories.length || activeFormats.length);
 
   return (
-    <div className={cn("space-y-8", isPending && "opacity-70 transition-opacity")}>
+    <div className={cn("space-y-6", isPending && "opacity-70 transition-opacity")}>
       <form onSubmit={onSubmit} className="flex items-center gap-3">
         <input
           type="search"
@@ -66,50 +80,45 @@ export function SearchAndFilters({ categories }: { categories: Category[] }) {
         </button>
       </form>
 
-      <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-accent text-xs font-semibold uppercase tracking-[0.2em] text-ink-300">
-            Categorie
-          </span>
-          <FilterPill
-            active={!activeCategory}
-            onClick={() => updateParam("categorie", null)}
-            label="Toutes"
-          />
-          {categories.map((category) => (
-            <FilterPill
-              key={category.slug}
-              active={activeCategory === category.slug}
-              onClick={() => updateParam("categorie", category.slug)}
-              label={category.name}
-            />
-          ))}
-        </div>
+      <div className="flex flex-wrap items-end gap-4">
+        <MultiSelect
+          label="Categories"
+          allLabel="Toutes les categories"
+          options={categories.map((category) => ({ value: category.slug, label: category.name }))}
+          selected={activeCategories}
+          onChange={(values) => updateParam("categorie", values.join(",") || null)}
+        />
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-accent text-xs font-semibold uppercase tracking-[0.2em] text-ink-300">
-            Format
-          </span>
-          <FilterPill active={!activeFormat} onClick={() => updateParam("format", null)} label="Tous" />
-          {FORMATS.map((format) => (
-            <FilterPill
-              key={format.value}
-              active={activeFormat === format.value}
-              onClick={() => updateParam("format", format.value)}
-              label={format.label}
-            />
-          ))}
-        </div>
+        <MultiSelect
+          label="Formats"
+          allLabel="Tous les formats"
+          options={FORMATS}
+          selected={activeFormats}
+          onChange={(values) => updateParam("format", values.join(",") || null)}
+        />
 
-        <div className="ml-auto flex items-center gap-2">
-          <label htmlFor="tri" className="font-accent text-xs font-semibold uppercase tracking-[0.2em] text-ink-300">
+        {hasFilters ? (
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="py-2.5 font-accent text-sm text-navy-900 underline-offset-4 hover:underline"
+          >
+            Reinitialiser
+          </button>
+        ) : null}
+
+        <div className="w-full sm:ml-auto sm:w-auto">
+          <label
+            htmlFor="tri"
+            className="mb-1.5 block font-accent text-xs font-semibold uppercase tracking-[0.2em] text-ink-300"
+          >
             Trier par
           </label>
           <select
             id="tri"
             value={activeSort}
             onChange={(event) => updateParam("tri", event.target.value)}
-            className="rounded-full border border-ink-900/15 bg-ivory-50 px-4 py-2 text-sm text-ink-900 focus:border-navy-900 focus:outline-none"
+            className="w-full rounded-full border border-ink-900/15 bg-ivory-50 px-4 py-2.5 text-sm text-ink-900 focus:border-navy-900 focus:outline-none"
           >
             {SORTS.map((sort) => (
               <option key={sort.value} value={sort.value}>
@@ -120,30 +129,5 @@ export function SearchAndFilters({ categories }: { categories: Category[] }) {
         </div>
       </div>
     </div>
-  );
-}
-
-function FilterPill({
-  active,
-  onClick,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "rounded-full border px-4 py-1.5 font-accent text-sm transition-colors",
-        active
-          ? "border-navy-900 bg-navy-900 text-ivory-100"
-          : "border-ink-900/15 text-ink-700 hover:border-navy-900",
-      )}
-    >
-      {label}
-    </button>
   );
 }

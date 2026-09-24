@@ -5,7 +5,13 @@ import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/require-role";
 import { categorySchema } from "@/lib/validations/category";
 
-export type CategoryFormState = { error?: string; fieldErrors?: Record<string, string> } | undefined;
+export type CategoryFormState =
+  | { error?: string; success?: string; warnings?: string[]; fieldErrors?: Record<string, string> }
+  | undefined;
+
+function categoryWarnings(description?: string) {
+  return description ? [] : ["Aucune description : la page de la categorie sera moins explicite pour les visiteurs."];
+}
 
 export async function createCategory(
   _prevState: CategoryFormState,
@@ -41,7 +47,10 @@ export async function createCategory(
   revalidatePath("/admin/categories");
   revalidatePath("/categories");
   revalidatePath("/");
-  return undefined;
+  return {
+    success: `La categorie "${parsed.data.name}" a ete creee avec succes.`,
+    warnings: categoryWarnings(parsed.data.description),
+  };
 }
 
 export async function updateCategory(
@@ -75,7 +84,10 @@ export async function updateCategory(
   revalidatePath("/admin/categories");
   revalidatePath("/categories");
   revalidatePath("/");
-  return undefined;
+  return {
+    success: `La categorie "${parsed.data.name}" a ete mise a jour.`,
+    warnings: categoryWarnings(parsed.data.description),
+  };
 }
 
 export async function deleteCategory(id: string) {

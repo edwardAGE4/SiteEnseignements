@@ -2,12 +2,15 @@
 
 import { useActionState } from "react";
 import { authenticate } from "@/app/admin/connexion/actions";
+import { submitWithoutReset } from "@/lib/form";
+import { Alert } from "@/components/ui/Alert";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 
 export function LoginForm({ callbackUrl }: { callbackUrl: string }) {
   const [state, formAction, isPending] = useActionState(authenticate, undefined);
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form onSubmit={submitWithoutReset(formAction)} className="space-y-5">
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
 
       <div className="space-y-1.5">
@@ -28,21 +31,16 @@ export function LoginForm({ callbackUrl }: { callbackUrl: string }) {
         <label htmlFor="password" className="font-data text-xs font-medium uppercase tracking-wide text-ink-500">
           Mot de passe
         </label>
-        <input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           required
           autoComplete="current-password"
           className="w-full rounded-xl border border-ink-900/15 bg-ivory-50 px-4 py-3 text-sm text-ink-900 focus:border-navy-900 focus:outline-none"
         />
       </div>
 
-      {state?.error ? (
-        <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-          {state.error}
-        </p>
-      ) : null}
+      {state?.error ? <Alert variant="error">{state.error}</Alert> : null}
 
       <button
         type="submit"

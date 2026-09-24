@@ -1,11 +1,11 @@
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { PortraitPlaceholder } from "@/components/public/PortraitPlaceholder";
+import { PastorPortrait } from "@/components/public/PastorPortrait";
 
 export function Hero() {
   return (
     <section className="relative flex min-h-screen items-end overflow-hidden bg-navy-950">
-      <PortraitPlaceholder className="absolute inset-0" />
+      <PastorPortrait className="absolute inset-0" priority />
       <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/60 to-navy-950/10" />
 
       <Container className="relative z-10 pb-24 pt-40 md:pb-32">

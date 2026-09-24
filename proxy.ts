@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 
-const ADMIN_ONLY_PREFIXES = ["/admin/utilisateurs"];
+const ADMIN_ONLY_PREFIXES = ["/admin/utilisateurs", "/admin/parametres"];
 const PUBLIC_ADMIN_PATHS = ["/admin/connexion"];
 
 export default auth((req) => {

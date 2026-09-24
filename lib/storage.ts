@@ -1,6 +1,6 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "node:crypto";
-import { writeFile, mkdir, unlink } from "node:fs/promises";
+import { writeFile, mkdir, unlink, readFile } from "node:fs/promises";
 import path from "node:path";
 
 const PROVIDER = process.env.STORAGE_PROVIDER ?? "local";
@@ -59,6 +59,28 @@ export async function uploadFile(
   const fileName = path.basename(key);
   await writeFile(path.join(uploadsDir, fileName), buffer);
   return `/uploads/${prefix}/${fileName}`;
+}
+
+/**
+ * Relit un fichier enregistre (par son URL renvoyee par uploadFile) pour le
+ * servir depuis le meme domaine que le site. Renvoie null s'il est introuvable.
+ */
+export async function readStoredFile(url: string): Promise<Uint8Array | null> {
+  if (PROVIDER === "s3") {
+    const bucket = process.env.S3_BUCKET;
+    const key = bucket ? url.split(`${bucket}/`)[1] : undefined;
+    if (!bucket || !key) return null;
+    const client = getS3Client();
+    const result = await client.send(new GetObjectCommand({ Bucket: bucket, Key: key })).catch(() => null);
+    return (await result?.Body?.transformToByteArray()) ?? null;
+  }
+
+  if (!url.startsWith("/uploads/")) return null;
+  const uploadsRoot = path.join(process.cwd(), "public", "uploads");
+  const filePath = path.join(process.cwd(), "public", url);
+  // empeche de sortir du dossier uploads (ex. /uploads/../../.env)
+  if (!filePath.startsWith(uploadsRoot + path.sep)) return null;
+  return readFile(filePath).catch(() => null);
 }
 
 export async function deleteFile(url: string): Promise<void> {

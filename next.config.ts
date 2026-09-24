@@ -8,6 +8,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Autorise l'acces au serveur de developpement depuis le reseau local
+  // (ex: http://192.168.1.5:3000 depuis un telephone). Sans cela, Next bloque
+  // ses ressources de dev et l'interface ne devient jamais interactive.
+  allowedDevOrigins: ["192.168.*.*", "10.*.*.*"],
   async headers() {
     return [
       {

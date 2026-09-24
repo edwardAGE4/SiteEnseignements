@@ -1,0 +1,23 @@
+# Base de donnees PostgreSQL locale pour le developpement / les tests.
+# Demarrage : docker compose up -d
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: pasteur-gnali-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gnali
+      POSTGRES_PASSWORD: gnali_dev_password
+      POSTGRES_DB: pasteur_gnali
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gnali -d pasteur_gnali"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

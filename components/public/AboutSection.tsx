@@ -1,18 +1,20 @@
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/SectionHeading";
-import { PortraitPlaceholder } from "@/components/public/PortraitPlaceholder";
+import { PastorPortrait } from "@/components/public/PastorPortrait";
+import { MultilineText } from "@/components/ui/RichText";
+import { getBiography } from "@/lib/settings";
 
-export function AboutSection() {
+export async function AboutSection() {
+  const { title } = await getBiography();
+
   return (
     <section className="bg-ivory-100 py-28">
       <Container className="grid items-center gap-16 md:grid-cols-2">
         <div className="order-2 md:order-1">
           <Eyebrow>A propos</Eyebrow>
           <h2 className="mt-6 font-display text-balance text-[clamp(2rem,4vw,3rem)] font-semibold leading-[1.1] text-navy-900">
-            Une mission.
-            <br />
-            Une transmission.
+            <MultilineText text={title} />
           </h2>
           <div className="prose-editorial mt-6 space-y-5 text-base leading-relaxed text-ink-700">
             <p>
@@ -32,7 +34,7 @@ export function AboutSection() {
         </div>
 
         <div className="order-1 md:order-2">
-          <PortraitPlaceholder className="aspect-[4/5] w-full rounded-3xl" />
+          <PastorPortrait className="aspect-[4/5] w-full rounded-3xl" />
         </div>
       </Container>
     </section>

@@ -5,7 +5,8 @@ import { Container } from "@/components/ui/Container";
 import { Tag } from "@/components/ui/Tag";
 import { VideoEmbed } from "@/components/public/VideoEmbed";
 import { SpotifyEmbed } from "@/components/public/SpotifyEmbed";
-import { PdfButton } from "@/components/public/PdfButton";
+import { PdfDocuments } from "@/components/public/PdfDocuments";
+import { LikesProvider, LikeButton } from "@/components/public/Likes";
 import { ViewTracker } from "@/components/public/ViewTracker";
 import { TeachingGrid } from "@/components/public/TeachingGrid";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -103,9 +104,25 @@ export default async function TeachingDetailPage({
       </Container>
 
       <Container className="max-w-3xl space-y-8 pb-24">
-        {teaching.youtubeUrl ? <VideoEmbed url={teaching.youtubeUrl} /> : null}
-        {teaching.spotifyUrl ? <SpotifyEmbed url={teaching.spotifyUrl} /> : null}
-        {teaching.pdfUrl ? <PdfButton slug={teaching.slug} /> : null}
+        <LikesProvider slug={teaching.slug}>
+          {teaching.youtubeUrl ? (
+            <div className="space-y-3">
+              <VideoEmbed url={teaching.youtubeUrl} />
+              <div className="flex justify-end">
+                <LikeButton target="youtube" label="la video" />
+              </div>
+            </div>
+          ) : null}
+          {teaching.spotifyUrl ? (
+            <div className="space-y-3">
+              <SpotifyEmbed url={teaching.spotifyUrl} />
+              <div className="flex justify-end">
+                <LikeButton target="spotify" label="l'audio Spotify" />
+              </div>
+            </div>
+          ) : null}
+          <PdfDocuments slug={teaching.slug} documents={teaching.documents} />
+        </LikesProvider>
 
         {teaching.tags.length > 0 ? (
           <div className="flex flex-wrap gap-2 pt-4">

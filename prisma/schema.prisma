@@ -55,8 +55,6 @@ model Teaching {
   description   String
   youtubeUrl    String?
   spotifyUrl    String?
-  pdfUrl        String?
-  pdfFileName   String?
   coverImageUrl String?
   tags          String[]           @default([])
   status        Status             @default(DRAFT)
@@ -68,6 +66,8 @@ model Teaching {
   createdById   String
 
   categories    TeachingCategory[]
+  documents     TeachingDocument[]
+  likes         MediaLike[]
 
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
@@ -87,4 +87,43 @@ model TeachingCategory {
   @@id([teachingId, categoryId])
   @@index([categoryId])
   @@map("teaching_categories")
+}
+
+// Documents PDF d'un enseignement (plusieurs par enseignement)
+model TeachingDocument {
+  id         String   @id @default(cuid())
+  teaching   Teaching @relation(fields: [teachingId], references: [id], onDelete: Cascade)
+  teachingId String
+  url        String
+  fileName   String
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([teachingId, order])
+  @@map("teaching_documents")
+}
+
+// "J'aime" anonymes sur un media d'un enseignement.
+// target : "youtube", "spotify" ou "pdf:<id du document>"
+// visitorId : identifiant aleatoire stocke dans un cookie du visiteur
+model MediaLike {
+  id         String   @id @default(cuid())
+  teaching   Teaching @relation(fields: [teachingId], references: [id], onDelete: Cascade)
+  teachingId String
+  target     String
+  visitorId  String
+  createdAt  DateTime @default(now())
+
+  @@unique([teachingId, target, visitorId])
+  @@index([teachingId, target])
+  @@map("media_likes")
+}
+
+// Reglages du site modifiables depuis l'admin (ex. photo du pasteur)
+model SiteSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
 }

@@ -18,6 +18,7 @@ export default async function AdminTeachingsPage() {
     include: {
       createdBy: { select: { name: true } },
       categories: { include: { category: true } },
+      _count: { select: { likes: true } },
     },
   });
 
@@ -49,6 +50,7 @@ export default async function AdminTeachingsPage() {
                 <th className="px-5 py-3 font-medium">Date</th>
                 <th className="px-5 py-3 font-medium">Vues</th>
                 <th className="px-5 py-3 font-medium">Telech.</th>
+                <th className="px-5 py-3 font-medium">J&apos;aime</th>
                 <th className="px-5 py-3 font-medium">Auteur</th>
                 <th className="px-5 py-3" />
               </tr>
@@ -66,6 +68,7 @@ export default async function AdminTeachingsPage() {
                   <td className="px-5 py-4 text-ink-500">{formatDate(teaching.publishedAt ?? teaching.createdAt)}</td>
                   <td className="px-5 py-4 text-ink-500">{teaching.viewCount}</td>
                   <td className="px-5 py-4 text-ink-500">{teaching.downloadCount}</td>
+                  <td className="px-5 py-4 text-ink-500">{teaching._count.likes}</td>
                   <td className="px-5 py-4 text-ink-500">{teaching.createdBy.name}</td>
                   <td className="px-5 py-4">
                     <TeachingRowActions

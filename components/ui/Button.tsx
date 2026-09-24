@@ -17,6 +17,23 @@ const SIZES = {
   md: "px-6 py-3 text-sm md:text-base",
 };
 
+type SizeKey = keyof typeof SIZES;
+type VariantKey = keyof typeof VARIANTS;
+
+/** Classes d'un bouton, pour les styler sur un element qui n'est pas <Button> (ex. <a> externe). */
+export function buttonClassName({
+  variant = "primary",
+  size = "md",
+  className,
+}: { variant?: VariantKey; size?: SizeKey; className?: string } = {}) {
+  return cn(
+    "inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-wide transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2",
+    VARIANTS[variant],
+    SIZES[size],
+    className,
+  );
+}
+
 type CommonProps = {
   variant?: keyof typeof VARIANTS;
   size?: keyof typeof SIZES;
@@ -35,12 +52,7 @@ type ButtonAsButton = CommonProps &
 
 export function Button(props: ButtonAsLink | ButtonAsButton) {
   const { variant = "primary", size = "md", className, children, ...rest } = props;
-  const classes = cn(
-    "inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-wide transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2",
-    VARIANTS[variant],
-    SIZES[size],
-    className,
-  );
+  const classes = buttonClassName({ variant, size, className });
 
   if ("href" in props && props.href) {
     const { href, ...linkRest } = rest as ButtonAsLink;

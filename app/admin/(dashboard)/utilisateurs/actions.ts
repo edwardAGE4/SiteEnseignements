@@ -6,7 +6,9 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/require-role";
 import { createUserSchema, updateUserSchema } from "@/lib/validations/user";
 
-export type UserFormState = { error?: string; fieldErrors?: Record<string, string> } | undefined;
+export type UserFormState =
+  | { error?: string; success?: string; warnings?: string[]; fieldErrors?: Record<string, string> }
+  | undefined;
 
 export async function createUser(
   _prevState: UserFormState,
@@ -44,7 +46,13 @@ export async function createUser(
   });
 
   revalidatePath("/admin/utilisateurs");
-  return undefined;
+  return {
+    success: `L'utilisateur ${parsed.data.name} a ete cree avec succes.`,
+    warnings:
+      parsed.data.role === "ADMIN"
+        ? ["Ce compte est administrateur : il peut gerer les utilisateurs et tous les contenus."]
+        : [],
+  };
 }
 
 export async function updateUser(
@@ -82,7 +90,12 @@ export async function updateUser(
   });
 
   revalidatePath("/admin/utilisateurs");
-  return undefined;
+
+  const warnings: string[] = [];
+  if (!parsed.data.isActive) warnings.push("Ce compte est desactive : l'utilisateur ne pourra plus se connecter.");
+  if (parsed.data.password) warnings.push("Le mot de passe a ete modifie : pensez a communiquer le nouveau a l'utilisateur.");
+
+  return { success: `L'utilisateur ${parsed.data.name} a ete mis a jour.`, warnings };
 }
 
 export async function deleteUser(id: string) {

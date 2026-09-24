@@ -40,7 +40,7 @@ export default async function CategoryDetailPage({
   if (!category) notFound();
 
   const page = Number(pageParam ?? "1") || 1;
-  const { items, total, pageCount } = await listTeachings({ categorySlug: slug, page });
+  const { items, total, pageCount } = await listTeachings({ categorySlugs: [slug], page });
 
   return (
     <div className="pt-32 pb-28">

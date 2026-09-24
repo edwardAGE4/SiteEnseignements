@@ -1,8 +1,11 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
+import { submitWithoutReset } from "@/lib/form";
 import { slugify } from "@/lib/utils";
 import type { CategoryFormState } from "@/app/admin/(dashboard)/categories/actions";
+import { FormAlerts } from "@/components/ui/Alert";
+import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
 
 export function CategoryForm({
   action,
@@ -13,27 +16,29 @@ export function CategoryForm({
   action: (prevState: CategoryFormState, formData: FormData) => Promise<CategoryFormState>;
   defaults?: { name: string; slug: string; description: string };
   submitLabel?: string;
-  onSuccess?: () => void;
+  onSuccess?: (result: CategoryFormState) => void;
 }) {
   const [name, setName] = useState(defaults?.name ?? "");
   const [slug, setSlug] = useState(defaults?.slug ?? "");
   const [slugTouched, setSlugTouched] = useState(Boolean(defaults?.slug));
 
+  const formRef = useRef<HTMLFormElement>(null);
   const [state, formAction, isPending] = useActionState(async (prev: CategoryFormState, formData: FormData) => {
     const result = await action(prev, formData);
     if (!result?.error) {
-      onSuccess?.();
+      onSuccess?.(result);
       if (!defaults) {
         setName("");
         setSlug("");
         setSlugTouched(false);
+        formRef.current?.reset();
       }
     }
     return result;
   }, undefined);
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form ref={formRef} onSubmit={submitWithoutReset(formAction)} className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label className="font-data text-xs font-medium uppercase tracking-wide text-ink-500">Nom</label>
@@ -70,15 +75,20 @@ export function CategoryForm({
         <textarea name="description" rows={2} defaultValue={defaults?.description} className={inputClass} />
       </div>
 
-      {state?.error ? <p className="text-sm text-red-600">{state.error}</p> : null}
+      <FormAlerts state={state} />
 
-      <button
-        type="submit"
+      <ConfirmSubmitButton
         disabled={isPending}
+        title={defaults ? "Mettre a jour cette categorie ?" : "Creer cette categorie ?"}
+        description={
+          defaults
+            ? "Les modifications de cette categorie vont etre enregistrees en base de donnees."
+            : "La nouvelle categorie va etre enregistree en base de donnees."
+        }
         className="rounded-full bg-navy-900 px-5 py-2.5 font-data text-sm font-medium text-ivory-100 hover:bg-navy-800 disabled:opacity-60"
       >
         {isPending ? "..." : submitLabel}
-      </button>
+      </ConfirmSubmitButton>
     </form>
   );
 }
