@@ -37,7 +37,14 @@ export function getBlobToken(): string | undefined {
 }
 
 function isS3Configured() {
-  return Boolean(process.env.S3_BUCKET && process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY);
+  if (!(process.env.S3_BUCKET && process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY)) return false;
+  // S3_ENDPOINT laisse a sa valeur d'exemple (https://<ref>...) : S3 inutilisable
+  const endpoint = process.env.S3_ENDPOINT;
+  if (endpoint && !URL.canParse(endpoint)) {
+    console.error(`[storage] S3_ENDPOINT invalide ("${endpoint}") : stockage S3 ignore.`);
+    return false;
+  }
+  return true;
 }
 
 /** Stockages utilisables pour les nouveaux envois, par ordre de preference. */
