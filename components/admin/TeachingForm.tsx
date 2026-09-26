@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { slugify } from "@/lib/utils";
 import { extractYoutubeId } from "@/lib/media";
 import { submitWithoutReset } from "@/lib/form";
-import { uploadWithProgress } from "@/lib/upload";
+import { uploadMedia } from "@/lib/upload";
 import { validateImageUpload, validatePdfUpload } from "@/lib/file-validation";
 import { MAX_DOCUMENTS } from "@/lib/validations/teaching";
 import type { TeachingFormState } from "@/app/admin/(dashboard)/enseignements/actions";
@@ -98,7 +98,7 @@ export function TeachingForm({
 
     setCoverProgress(0);
     try {
-      const data = await uploadWithProgress<{ url: string }>("/api/upload/image", file, setCoverProgress);
+      const data = await uploadMedia("image", file, setCoverProgress);
       setCoverImageUrl(data.url);
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : "Echec de l'envoi de l'image.");
@@ -131,7 +131,7 @@ export function TeachingForm({
       setPdfQueueLabel(files.length > 1 ? `${index + 1} / ${files.length}` : null);
       setPdfProgress(0);
       try {
-        const data = await uploadWithProgress<{ url: string; fileName: string }>("/api/upload/pdf", file, setPdfProgress);
+        const data = await uploadMedia("pdf", file, setPdfProgress);
         setDocuments((current) => [...current, { url: data.url, fileName: data.fileName }]);
       } catch (error) {
         errors.push(`${file.name} : ${error instanceof Error ? error.message : "echec de l'envoi."}`);

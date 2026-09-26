@@ -17,8 +17,10 @@ export default async function AboutPage() {
   const biography = await getBiography();
 
   return (
-    <div className="pt-32">
-      <section className="bg-navy-950 pb-24">
+    <div>
+      {/* le bandeau sombre passe sous l'en-tete fixe : l'espacement est interne */}
+      <section className="bg-navy-950 pt-40 pb-24 md:pt-48">
+
         <Container className="max-w-3xl">
           <Eyebrow light>A propos</Eyebrow>
           <h1 className="mt-6 font-display text-balance text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1.05] text-ivory-100">

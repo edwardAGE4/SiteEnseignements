@@ -1,14 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { isRateLimited } from "@/lib/rate-limit";
-import { readStoredFile } from "@/lib/storage";
+import { backendForUrl, getRemoteFileUrl, readLocalFile } from "@/lib/storage";
 
 /**
  * Sert un document PDF d'un enseignement (?doc=<id>) depuis le domaine du site.
  * - par defaut : affichage dans le lecteur PDF du navigateur (inline)
  * - ?mode=telechargement : telechargement du fichier (attachment)
- * Le fichier est relu cote serveur plutot que via une redirection, ce qui
- * evite les erreurs CORS et fonctionne quel que soit le stockage (local ou S3).
+ * En stockage local, le fichier est relu cote serveur (meme domaine, pas de
+ * probleme CORS) ; en stockage distant, redirection vers le fichier.
  */
 export async function GET(
   request: NextRequest,
@@ -37,11 +37,6 @@ export async function GET(
     return NextResponse.json({ error: "Document introuvable" }, { status: 404 });
   }
 
-  const file = await readStoredFile(document.url);
-  if (!file) {
-    return NextResponse.json({ error: "Fichier PDF introuvable sur le serveur" }, { status: 404 });
-  }
-
   const ip = request.headers.get("x-forwarded-for") ?? "anonymous";
   if (!isRateLimited(`telechargement:${ip}:${slug}:${documentId ?? ""}`, 10_000)) {
     await prisma.teaching.update({
@@ -51,6 +46,17 @@ export async function GET(
   }
 
   const fileName = /\.pdf$/i.test(document.fileName) ? document.fileName : `${document.fileName}.pdf`;
+
+  // Fichier sur Vercel Blob ou S3 : redirection (les reponses des fonctions
+  // sont limitees a 4,5 Mo sur Vercel, un PDF ne doit donc pas transiter par ici).
+  if (backendForUrl(document.url) !== "local") {
+    return NextResponse.redirect(await getRemoteFileUrl(document.url, fileName, download), 307);
+  }
+
+  const file = await readLocalFile(document.url);
+  if (!file) {
+    return NextResponse.json({ error: "Fichier PDF introuvable sur le serveur" }, { status: 404 });
+  }
 
   return new NextResponse(file as BodyInit, {
     headers: {

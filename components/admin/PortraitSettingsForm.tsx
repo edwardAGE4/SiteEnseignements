@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { submitWithoutReset } from "@/lib/form";
-import { uploadWithProgress } from "@/lib/upload";
+import { uploadMedia } from "@/lib/upload";
 import { validateImageUpload } from "@/lib/file-validation";
 import {
   removePastorPortrait,
@@ -41,7 +41,7 @@ export function PortraitSettingsForm({ currentUrl }: { currentUrl: string | null
 
     setProgress(0);
     try {
-      const data = await uploadWithProgress<{ url: string }>("/api/upload/image", file, setProgress);
+      const data = await uploadMedia("image", file, setProgress);
       setPendingUrl(data.url);
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : "Echec de l'envoi de la photo.");
