@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     template: "%s — Pasteur Jean-Marc GNALI",
   },
   description:
-    "Des enseignements pour comprendre, grandir et transmettre. Retrouvez les enseignements du Pasteur Jean-Marc GNALI en video, audio et PDF.",
+    "Des enseignements pour comprendre, grandir et transmettre. Retrouvez les enseignements du Pasteur Jean-Marc GNALI en vidéo, audio et PDF.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

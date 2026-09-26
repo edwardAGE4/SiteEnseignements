@@ -31,7 +31,7 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
 
     const snippets = {
       subtitle: `${prefix}\n## ${selected || "Sous-titre"}\n`,
-      list: `${prefix}- ${selected || "Premier element"}\n- Deuxieme element\n`,
+      list: `${prefix}- ${selected || "Premier élément"}\n- Deuxième élément\n`,
       bold: `**${selected || "texte en gras"}**`,
       paragraph: "\n\n",
     };
@@ -51,7 +51,7 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
   return (
     <div className="grid gap-8 xl:grid-cols-2">
       <form onSubmit={submitWithoutReset(formAction)} className="space-y-5">
-        <FieldBlock label="Titre de la page" hint="Grand titre du bandeau. Un retour a la ligne = une nouvelle ligne." count={values.title} max={BIOGRAPHY_LIMITS.title} error={errors.title}>
+        <FieldBlock label="Titre de la page" hint="Grand titre du bandeau. Un retour à la ligne = une nouvelle ligne." count={values.title} max={BIOGRAPHY_LIMITS.title} error={errors.title}>
           <textarea
             name="title"
             rows={2}
@@ -62,7 +62,7 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
           />
         </FieldBlock>
 
-        <FieldBlock label="Introduction" hint="Phrase d'accroche mise en valeur au debut du texte. Optionnelle." count={values.lead} max={BIOGRAPHY_LIMITS.lead} error={errors.lead}>
+        <FieldBlock label="Introduction" hint="Phrase d'accroche mise en valeur au début du texte. Optionnelle." count={values.lead} max={BIOGRAPHY_LIMITS.lead} error={errors.lead}>
           <textarea
             name="lead"
             rows={3}
@@ -72,7 +72,7 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
           />
         </FieldBlock>
 
-        <FieldBlock label="Biographie detaillee" count={values.body} max={BIOGRAPHY_LIMITS.body} error={errors.body}>
+        <FieldBlock label="Biographie détaillée" count={values.body} max={BIOGRAPHY_LIMITS.body} error={errors.body}>
           <div className="flex flex-wrap gap-2">
             <FormatButton onClick={() => insertFormat("paragraph")}>¶ Paragraphe</FormatButton>
             <FormatButton onClick={() => insertFormat("subtitle")}>Sous-titre</FormatButton>
@@ -90,13 +90,13 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
             className={`${inputClass} font-mono text-[13px] leading-relaxed`}
           />
           <p className="text-xs text-ink-500">
-            Ligne vide = nouveau paragraphe · Retour a la ligne simple = saut de ligne ·{" "}
-            <code>## Titre</code> = sous-titre · <code>- element</code> = liste · <code>**texte**</code> = gras
+            Ligne vide = nouveau paragraphe · Retour à la ligne simple = saut de ligne ·{" "}
+            <code>## Titre</code> = sous-titre · <code>- élément</code> = liste · <code>**texte**</code> = gras
           </p>
         </FieldBlock>
 
         <div className="grid gap-5 sm:grid-cols-[2fr_1fr]">
-          <FieldBlock label="Citation" hint="Bandeau en bas de page. Vide = masque." count={values.quote} max={BIOGRAPHY_LIMITS.quote} error={errors.quote}>
+          <FieldBlock label="Citation" hint="Bandeau en bas de page. Vide = masqué." count={values.quote} max={BIOGRAPHY_LIMITS.quote} error={errors.quote}>
             <textarea
               name="quote"
               rows={2}
@@ -120,7 +120,7 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
         <ConfirmSubmitButton
           disabled={isPending}
           title="Publier la biographie ?"
-          description="Le contenu de la page A propos sera remplace par ce texte."
+          description="Le contenu de la page À propos sera remplacé par ce texte."
           className="rounded-full bg-navy-900 px-5 py-2.5 font-data text-sm font-medium text-ivory-100 hover:bg-navy-800 disabled:opacity-60"
         >
           {isPending ? "Publication..." : "Publier la biographie"}
@@ -128,10 +128,10 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
       </form>
 
       <div>
-        <p className="mb-2 font-data text-xs font-medium uppercase tracking-wide text-ink-500">Apercu en direct</p>
+        <p className="mb-2 font-data text-xs font-medium uppercase tracking-wide text-ink-500">Aperçu en direct</p>
         <div className="overflow-hidden rounded-2xl border border-ink-900/10 xl:sticky xl:top-6">
           <div className="bg-navy-950 px-6 py-8">
-            <p className="font-accent text-[10px] font-semibold uppercase tracking-[0.3em] text-gold-400">A propos</p>
+            <p className="font-accent text-[10px] font-semibold uppercase tracking-[0.3em] text-gold-400">À propos</p>
             <p className="mt-3 font-display text-3xl font-semibold leading-[1.1] text-ivory-100">
               <MultilineText text={values.title || " "} />
             </p>

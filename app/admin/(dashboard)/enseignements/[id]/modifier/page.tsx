@@ -35,7 +35,7 @@ export default async function EditTeachingPage({
 
   return (
     <div className="max-w-3xl space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-semibold text-navy-900">Modifier l&apos;enseignement</h1>
           <p className="mt-1 text-sm text-ink-500">{teaching.title}</p>
@@ -57,7 +57,7 @@ export default async function EditTeachingPage({
         submitLabel="Enregistrer les modifications"
         initialState={
           statut === "cree"
-            ? { success: "L'enseignement a ete cree avec succes.", warnings: getTeachingWarnings(teaching) }
+            ? { success: "L'enseignement a été créé avec succès.", warnings: getTeachingWarnings(teaching) }
             : undefined
         }
         defaults={{

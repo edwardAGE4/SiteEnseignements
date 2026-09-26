@@ -12,8 +12,8 @@ if (!authSecret && process.env.NODE_ENV === "production") {
   const authVariableNames = Object.keys(process.env).filter((name) => /AUTH|SECRET/i.test(name));
   console.error(
     `[auth] AUTH_SECRET absent ou vide dans cet environnement (${process.env.VERCEL_ENV ?? "inconnu"}). ` +
-      `Variables detectees : ${authVariableNames.join(", ") || "aucune"}. ` +
-      "Ajoutez AUTH_SECRET dans les variables d'environnement de l'hebergeur puis redeployez.",
+      `Variables détectées : ${authVariableNames.join(", ") || "aucune"}. ` +
+      "Ajoutez AUTH_SECRET dans les variables d'environnement de l'hébergeur puis redéployez.",
   );
 }
 

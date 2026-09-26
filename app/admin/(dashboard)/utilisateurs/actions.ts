@@ -31,7 +31,7 @@ export async function createUser(
 
   const existing = await prisma.user.findUnique({ where: { email: parsed.data.email } });
   if (existing) {
-    return { error: "Un utilisateur avec cet e-mail existe deja." };
+    return { error: "Un utilisateur avec cet e-mail existe déjà." };
   }
 
   const passwordHash = await bcrypt.hash(parsed.data.password, 12);
@@ -47,10 +47,10 @@ export async function createUser(
 
   revalidatePath("/admin/utilisateurs");
   return {
-    success: `L'utilisateur ${parsed.data.name} a ete cree avec succes.`,
+    success: `L'utilisateur ${parsed.data.name} a été créé avec succès.`,
     warnings:
       parsed.data.role === "ADMIN"
-        ? ["Ce compte est administrateur : il peut gerer les utilisateurs et tous les contenus."]
+        ? ["Ce compte est administrateur : il peut gérer les utilisateurs et tous les contenus."]
         : [],
   };
 }
@@ -92,10 +92,10 @@ export async function updateUser(
   revalidatePath("/admin/utilisateurs");
 
   const warnings: string[] = [];
-  if (!parsed.data.isActive) warnings.push("Ce compte est desactive : l'utilisateur ne pourra plus se connecter.");
-  if (parsed.data.password) warnings.push("Le mot de passe a ete modifie : pensez a communiquer le nouveau a l'utilisateur.");
+  if (!parsed.data.isActive) warnings.push("Ce compte est désactivé : l'utilisateur ne pourra plus se connecter.");
+  if (parsed.data.password) warnings.push("Le mot de passe a été modifié : pensez à communiquer le nouveau à l'utilisateur.");
 
-  return { success: `L'utilisateur ${parsed.data.name} a ete mis a jour.`, warnings };
+  return { success: `L'utilisateur ${parsed.data.name} a été mis à jour.`, warnings };
 }
 
 export async function deleteUser(id: string) {

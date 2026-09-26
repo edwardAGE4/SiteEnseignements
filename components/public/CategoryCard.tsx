@@ -13,7 +13,7 @@ export function CategoryCard({
       <div>
         <h3 className="font-display text-2xl font-semibold text-navy-900">{category.name}</h3>
         {category.description ? (
-          <p className="mt-3 text-sm leading-relaxed text-ink-500">{category.description}</p>
+          <p className="mt-3 text-justify hyphens-auto text-sm leading-relaxed text-ink-500 md:text-left">{category.description}</p>
         ) : null}
       </div>
       <div className="mt-8 flex items-center justify-between font-data text-xs text-ink-300">

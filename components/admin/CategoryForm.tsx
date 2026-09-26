@@ -79,11 +79,11 @@ export function CategoryForm({
 
       <ConfirmSubmitButton
         disabled={isPending}
-        title={defaults ? "Mettre a jour cette categorie ?" : "Creer cette categorie ?"}
+        title={defaults ? "Mettre à jour cette catégorie ?" : "Créer cette catégorie ?"}
         description={
           defaults
-            ? "Les modifications de cette categorie vont etre enregistrees en base de donnees."
-            : "La nouvelle categorie va etre enregistree en base de donnees."
+            ? "Les modifications de cette catégorie vont être enregistrées en base de données."
+            : "La nouvelle catégorie va être enregistrée en base de données."
         }
         className="rounded-full bg-navy-900 px-5 py-2.5 font-data text-sm font-medium text-ivory-100 hover:bg-navy-800 disabled:opacity-60"
       >

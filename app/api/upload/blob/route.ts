@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       token: getBlobToken(),
       onBeforeGenerateToken: async (pathname, clientPayload) => {
         const session = await auth();
-        if (!session?.user) throw new Error("Non autorise.");
+        if (!session?.user) throw new Error("Non autorisé.");
 
         const limits = clientPayload === "image" || clientPayload === "pdf" ? LIMITS[clientPayload] : null;
         if (!limits || !BLOB_PATHNAME_PATTERN.test(pathname) || !pathname.startsWith(limits.folder)) {
@@ -41,10 +41,10 @@ export async function POST(request: Request) {
     });
     return NextResponse.json(result);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Envoi refuse.";
+    const message = error instanceof Error ? error.message : "Envoi refusé.";
     // store cree en "prive" : les fichiers du site doivent etre lisibles publiquement
     const hint = /access|private/i.test(message)
-      ? " Le store Vercel Blob doit etre PUBLIC pour afficher les images et PDF du site."
+      ? " Le store Vercel Blob doit être PUBLIC pour afficher les images et PDF du site."
       : "";
     return NextResponse.json({ error: `${message}${hint}` }, { status: 400 });
   }

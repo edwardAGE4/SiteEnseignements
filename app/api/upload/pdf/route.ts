@@ -7,7 +7,7 @@ import { exceedsRate } from "@/lib/rate-limit";
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) {
-    return NextResponse.json({ error: "Non autorise." }, { status: 401 });
+    return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   }
 
   if (exceedsRate(`upload-pdf:${session.user.id}`, 30, 60_000)) {

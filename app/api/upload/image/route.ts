@@ -7,7 +7,7 @@ import { isRateLimited } from "@/lib/rate-limit";
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) {
-    return NextResponse.json({ error: "Non autorise." }, { status: 401 });
+    return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   }
 
   if (isRateLimited(`upload-image:${session.user.id}`, 2_000)) {
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
   if (!mimeType) {
     return NextResponse.json(
-      { error: "Format d'image non reconnu. Formats acceptes : JPEG, PNG, WebP." },
+      { error: "Format d'image non reconnu. Formats acceptés : JPEG, PNG, WebP." },
       { status: 400 },
     );
   }

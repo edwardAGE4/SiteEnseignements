@@ -71,7 +71,7 @@ export async function createTeaching(
 
   const existing = await prisma.teaching.findUnique({ where: { slug: data.slug } });
   if (existing) {
-    return { error: "Ce slug est deja utilise par un autre enseignement.", fieldErrors: { slug: "Slug deja utilise." } };
+    return { error: "Ce slug est déjà utilisé par un autre enseignement.", fieldErrors: { slug: "Slug déjà utilisé." } };
   }
 
   const teaching = await prisma.teaching.create({
@@ -110,7 +110,7 @@ export async function updateTeaching(
 
   const existing = await prisma.teaching.findUnique({ where: { slug: data.slug } });
   if (existing && existing.id !== id) {
-    return { error: "Ce slug est deja utilise par un autre enseignement.", fieldErrors: { slug: "Slug deja utilise." } };
+    return { error: "Ce slug est déjà utilisé par un autre enseignement.", fieldErrors: { slug: "Slug déjà utilisé." } };
   }
 
   const current = await prisma.teaching.findUnique({ where: { id }, include: { documents: true } });
@@ -168,7 +168,7 @@ export async function updateTeaching(
   });
 
   return {
-    success: "Les modifications ont ete enregistrees avec succes.",
+    success: "Les modifications ont été enregistrées avec succès.",
     warnings: getTeachingWarnings(data),
     documents: savedDocuments,
   };

@@ -12,7 +12,7 @@ export const revalidate = 30;
 
 export const metadata: Metadata = {
   title: "Enseignements",
-  description: "Explorez la bibliotheque des enseignements du Pasteur Jean-Marc GNALI : videos, audios et documents.",
+  description: "Explorez la bibliothèque des enseignements du Pasteur Jean-Marc GNALI : vidéos, audios et documents.",
   alternates: { canonical: "/enseignements" },
 };
 
@@ -46,8 +46,8 @@ export default async function TeachingsPage({
   return (
     <div className="pt-32">
       <Container className="pb-16">
-        <SectionHeading eyebrow="Bibliotheque" title="Tous les enseignements" />
-        <p className="mt-4 max-w-xl text-ink-500">
+        <SectionHeading eyebrow="Bibliothèque" title="Tous les enseignements" />
+        <p className="mx-auto mt-4 max-w-xl text-center text-ink-500">
           {total} enseignement{total > 1 ? "s" : ""} disponible{total > 1 ? "s" : ""}.
         </p>
       </Container>

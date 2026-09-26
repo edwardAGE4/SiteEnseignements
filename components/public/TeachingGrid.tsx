@@ -7,7 +7,7 @@ export function TeachingGrid({ teachings }: { teachings: TeachingCardData[] }) {
   if (teachings.length === 0) {
     return (
       <EmptyState
-        title="Aucun enseignement trouve"
+        title="Aucun enseignement trouvé"
         description="Essayez d'ajuster votre recherche ou vos filtres."
       />
     );

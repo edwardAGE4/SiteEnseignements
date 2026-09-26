@@ -6,7 +6,7 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 export function StatusBadge({ status }: { status: "PUBLISHED" | "DRAFT" }) {
-  const label = status === "PUBLISHED" ? "Publie" : "Brouillon";
+  const label = status === "PUBLISHED" ? "Publié" : "Brouillon";
   return (
     <span
       className={cn(

@@ -14,7 +14,7 @@ export function VideoEmbed({ url }: { url: string }) {
       {loaded ? (
         <iframe
           src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1`}
-          title="Lecteur video YouTube"
+          title="Lecteur vidéo YouTube"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           className="h-full w-full"
@@ -24,7 +24,7 @@ export function VideoEmbed({ url }: { url: string }) {
           type="button"
           onClick={() => setLoaded(true)}
           className="group relative h-full w-full"
-          aria-label="Lancer la video"
+          aria-label="Lancer la vidéo"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

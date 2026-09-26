@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { href: "/enseignements", label: "Enseignements" },
-  { href: "/categories", label: "Categories" },
-  { href: "/a-propos", label: "A propos" },
+  { href: "/categories", label: "Catégories" },
+  { href: "/a-propos", label: "À propos" },
 ];
 
 export function Header() {

@@ -16,7 +16,7 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
     body: JSON.stringify(body),
   });
   const data = await res.json().catch(() => null);
-  if (!res.ok || !data) throw new Error(data?.error ?? `Echec de l'envoi (erreur ${res.status}).`);
+  if (!res.ok || !data) throw new Error(data?.error ?? `Échec de l'envoi (erreur ${res.status}).`);
   return data as T;
 }
 
@@ -83,7 +83,7 @@ export async function uploadMedia(
       // reponse non JSON (erreur serveur)
     }
     if (xhr.status < 200 || xhr.status >= 300 || !data?.url) {
-      throw new Error(data?.error ?? `Echec de l'envoi (erreur ${xhr.status}).`);
+      throw new Error(data?.error ?? `Échec de l'envoi (erreur ${xhr.status}).`);
     }
     return { url: data.url, fileName: file.name };
   }
@@ -102,7 +102,7 @@ export async function uploadMedia(
       });
       blobUrl = blob.url;
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Echec de l'envoi vers le stockage.";
+      const message = error instanceof Error ? error.message : "Échec de l'envoi vers le stockage.";
       if (sign.canFallback && isBlobCapacityError(message)) {
         console.warn(`Vercel Blob a refuse l'envoi (${message}) : bascule sur le stockage de secours.`);
         onProgress(0);
@@ -116,7 +116,7 @@ export async function uploadMedia(
 
   const xhr = await sendWithProgress("PUT", sign.uploadUrl, file, onProgress, { "Content-Type": sign.contentType });
   if (xhr.status < 200 || xhr.status >= 300) {
-    throw new Error(`Le stockage a refuse le fichier (erreur ${xhr.status}).`);
+    throw new Error(`Le stockage a refusé le fichier (erreur ${xhr.status}).`);
   }
 
   const confirmed = await postJson<{ url: string }>("/api/upload/confirm", { kind, url: sign.publicUrl });

@@ -7,7 +7,7 @@ import { QuoteSection } from "@/components/public/QuoteSection";
 import { getBiography } from "@/lib/settings";
 
 export const metadata: Metadata = {
-  title: "A propos",
+  title: "À propos",
   description: "Le parcours, la mission et la vision du Pasteur Jean-Marc GNALI.",
   alternates: { canonical: "/a-propos" },
 };
@@ -21,8 +21,8 @@ export default async function AboutPage() {
       {/* le bandeau sombre passe sous l'en-tete fixe : l'espacement est interne */}
       <section className="bg-navy-950 pt-40 pb-24 md:pt-48">
 
-        <Container className="max-w-3xl">
-          <Eyebrow light>A propos</Eyebrow>
+        <Container className="max-w-3xl text-center">
+          <Eyebrow light centered>À propos</Eyebrow>
           <h1 className="mt-6 font-display text-balance text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1.05] text-ivory-100">
             <MultilineText text={biography.title} />
           </h1>
@@ -33,9 +33,9 @@ export default async function AboutPage() {
         <Container className="grid items-start gap-16 md:grid-cols-[1fr_1.2fr]">
           <PastorPortrait className="aspect-[3/4] w-full rounded-3xl md:sticky md:top-28" />
 
-          <div className="prose-editorial space-y-6 text-lg leading-relaxed text-ink-700">
+          <div className="prose-editorial mx-auto w-full space-y-6 text-justify hyphens-auto text-lg leading-relaxed text-ink-700 md:text-left">
             {biography.lead ? (
-              <p className="font-display text-2xl font-semibold leading-snug text-navy-900">
+              <p className="text-center font-display text-2xl font-semibold leading-snug text-navy-900 md:text-left">
                 <MultilineText text={biography.lead} />
               </p>
             ) : null}

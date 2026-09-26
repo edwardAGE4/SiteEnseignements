@@ -44,7 +44,7 @@ export function PortraitSettingsForm({ currentUrl }: { currentUrl: string | null
       const data = await uploadMedia("image", file, setProgress);
       setPendingUrl(data.url);
     } catch (error) {
-      setUploadError(error instanceof Error ? error.message : "Echec de l'envoi de la photo.");
+      setUploadError(error instanceof Error ? error.message : "Échec de l'envoi de la photo.");
     } finally {
       setProgress(null);
     }
@@ -83,7 +83,7 @@ export function PortraitSettingsForm({ currentUrl }: { currentUrl: string | null
         </div>
 
         {pendingUrl ? (
-          <Alert variant="warning">Apercu : cliquez sur « Publier la photo » pour l&apos;afficher sur le site.</Alert>
+          <Alert variant="warning">Aperçu : cliquez sur « Publier la photo » pour l&apos;afficher sur le site.</Alert>
         ) : null}
         {uploadError ? <Alert variant="error">{uploadError}</Alert> : null}
         <FormAlerts state={state} />
@@ -92,7 +92,7 @@ export function PortraitSettingsForm({ currentUrl }: { currentUrl: string | null
           <ConfirmSubmitButton
             disabled={!pendingUrl || isPending || progress !== null}
             title="Publier cette photo ?"
-            description="Elle remplacera la photo actuelle sur la page d'accueil et la page A propos."
+            description="Elle remplacera la photo actuelle sur la page d'accueil et la page À propos."
             className="rounded-full bg-navy-900 px-5 py-2.5 font-data text-sm font-medium text-ivory-100 hover:bg-navy-800 disabled:opacity-40"
           >
             {isPending ? "Publication..." : "Publier la photo"}
@@ -112,7 +112,7 @@ export function PortraitSettingsForm({ currentUrl }: { currentUrl: string | null
             <ConfirmDialog
               triggerLabel="Retirer la photo"
               title="Retirer la photo du pasteur ?"
-              description="L'emplacement reserve sera affiche a la place sur le site."
+              description="L'emplacement réservé sera affiché à la place sur le site."
               confirmLabel="Retirer"
               action={removePastorPortrait}
               triggerClassName="font-data text-sm font-medium text-red-600 hover:underline"

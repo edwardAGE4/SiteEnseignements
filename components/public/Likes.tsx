@@ -36,7 +36,7 @@ export function LikesProvider({ slug, children }: { slug: string; children: Reac
     const wasLiked = state.liked.includes(target);
     const previous = state;
 
-    // mise a jour immediate, corrigee par la reponse du serveur
+    // mise à jour immediate, corrigee par la reponse du serveur
     setState((current) => ({
       counts: { ...current.counts, [target]: Math.max(0, (current.counts[target] ?? 0) + (wasLiked ? -1 : 1)) },
       liked: wasLiked ? current.liked.filter((item) => item !== target) : [...current.liked, target],

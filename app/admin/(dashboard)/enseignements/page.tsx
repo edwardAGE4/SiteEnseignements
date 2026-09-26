@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { StatusBadge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { TeachingRowActions } from "@/components/admin/TeachingRowActions";
+import { TeachingTable } from "@/components/admin/TeachingTable";
 import { formatDate } from "@/lib/utils";
 import { deleteTeaching, toggleTeachingStatus } from "./actions";
 
@@ -24,7 +23,7 @@ export default async function AdminTeachingsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-semibold text-navy-900">Enseignements</h1>
           <p className="mt-1 text-sm text-ink-500">{teachings.length} enseignement(s)</p>
@@ -38,51 +37,25 @@ export default async function AdminTeachingsPage() {
       </div>
 
       {teachings.length === 0 ? (
-        <EmptyState title="Aucun enseignement" description="Commencez par en creer un." />
+        <EmptyState title="Aucun enseignement" description="Commencez par en créer un." />
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-ink-900/10 bg-ivory-50">
-          <table className="w-full min-w-[840px] text-left text-sm">
-            <thead>
-              <tr className="border-b border-ink-900/10 text-xs uppercase tracking-wide text-ink-300">
-                <th className="px-5 py-3 font-medium">Titre</th>
-                <th className="px-5 py-3 font-medium">Categorie</th>
-                <th className="px-5 py-3 font-medium">Statut</th>
-                <th className="px-5 py-3 font-medium">Date</th>
-                <th className="px-5 py-3 font-medium">Vues</th>
-                <th className="px-5 py-3 font-medium">Telech.</th>
-                <th className="px-5 py-3 font-medium">J&apos;aime</th>
-                <th className="px-5 py-3 font-medium">Auteur</th>
-                <th className="px-5 py-3" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-ink-900/10">
-              {teachings.map((teaching) => (
-                <tr key={teaching.id}>
-                  <td className="max-w-[240px] truncate px-5 py-4 font-medium text-navy-900">{teaching.title}</td>
-                  <td className="px-5 py-4 text-ink-500">
-                    {teaching.categories.map((c) => c.category.name).join(", ") || "—"}
-                  </td>
-                  <td className="px-5 py-4">
-                    <StatusBadge status={teaching.status} />
-                  </td>
-                  <td className="px-5 py-4 text-ink-500">{formatDate(teaching.publishedAt ?? teaching.createdAt)}</td>
-                  <td className="px-5 py-4 text-ink-500">{teaching.viewCount}</td>
-                  <td className="px-5 py-4 text-ink-500">{teaching.downloadCount}</td>
-                  <td className="px-5 py-4 text-ink-500">{teaching._count.likes}</td>
-                  <td className="px-5 py-4 text-ink-500">{teaching.createdBy.name}</td>
-                  <td className="px-5 py-4">
-                    <TeachingRowActions
-                      id={teaching.id}
-                      status={teaching.status}
-                      onTogglePublish={toggleTeachingStatus}
-                      onDelete={deleteTeaching}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <TeachingTable
+          teachings={teachings.map((teaching) => ({
+            id: teaching.id,
+            title: teaching.title,
+            slug: teaching.slug,
+            status: teaching.status,
+            categories: teaching.categories.map((c) => c.category.name).join(", "),
+            tags: teaching.tags,
+            date: formatDate(teaching.publishedAt ?? teaching.createdAt),
+            viewCount: teaching.viewCount,
+            downloadCount: teaching.downloadCount,
+            likeCount: teaching._count.likes,
+            author: teaching.createdBy.name,
+          }))}
+          onTogglePublish={toggleTeachingStatus}
+          onDelete={deleteTeaching}
+        />
       )}
     </div>
   );

@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const createUserSchema = z.object({
-  name: z.string().trim().min(2, "Le nom doit contenir au moins 2 caracteres.").max(100),
+  name: z.string().trim().min(2, "Le nom doit contenir au moins 2 caractères.").max(100),
   email: z.string().trim().toLowerCase().email("Adresse e-mail invalide."),
-  password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caracteres."),
+  password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères."),
   role: z.enum(["ADMIN", "EDITOR"]),
 });
 
@@ -13,7 +13,7 @@ export const updateUserSchema = z.object({
   isActive: z.boolean(),
   password: z
     .string()
-    .min(8, "Le mot de passe doit contenir au moins 8 caracteres.")
+    .min(8, "Le mot de passe doit contenir au moins 8 caractères.")
     .optional()
     .or(z.literal("")),
 });

@@ -7,17 +7,25 @@ import { cn } from "@/lib/utils";
 const LINKS: { href: string; label: string; exact?: boolean }[] = [
   { href: "/admin", label: "Tableau de bord", exact: true },
   { href: "/admin/enseignements", label: "Enseignements" },
-  { href: "/admin/categories", label: "Categories" },
+  { href: "/admin/categories", label: "Catégories" },
 ];
 
 const ADMIN_ONLY_LINKS: { href: string; label: string; exact?: boolean }[] = [
   { href: "/admin/utilisateurs", label: "Utilisateurs" },
-  { href: "/admin/parametres", label: "Parametres" },
+  { href: "/admin/parametres", label: "Paramètres" },
 ];
 
-export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
+function useAdminLinks(isAdmin: boolean) {
   const pathname = usePathname();
   const links = isAdmin ? [...LINKS, ...ADMIN_ONLY_LINKS] : LINKS;
+  return links.map((link) => ({
+    ...link,
+    active: link.exact ? pathname === link.href : pathname.startsWith(link.href),
+  }));
+}
+
+export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
+  const links = useAdminLinks(isAdmin);
 
   return (
     <aside className="hidden w-64 shrink-0 border-r border-ink-900/10 bg-ivory-50 md:block">
@@ -28,21 +36,18 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
           </Link>
 
           <nav className="mt-10 flex flex-col gap-1">
-            {links.map((link) => {
-              const active = link.exact ? pathname === link.href : pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "rounded-lg px-3 py-2 font-data text-sm font-medium transition-colors",
-                    active ? "bg-navy-900 text-ivory-100" : "text-ink-700 hover:bg-ink-900/5",
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "rounded-lg px-3 py-2 font-data text-sm font-medium transition-colors",
+                  link.active ? "bg-navy-900 text-ivory-100" : "text-ink-700 hover:bg-ink-900/5",
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
         </div>
 
@@ -51,5 +56,31 @@ export function AdminSidebar({ isAdmin }: { isAdmin: boolean }) {
         </Link>
       </div>
     </aside>
+  );
+}
+
+/** Navigation de l'admin sur mobile (la barre laterale y est masquee) : onglets defilants. */
+export function AdminMobileNav({ isAdmin }: { isAdmin: boolean }) {
+  const links = useAdminLinks(isAdmin);
+
+  return (
+    <nav className="flex gap-2 overflow-x-auto border-b border-ink-900/10 bg-ivory-50 px-4 py-3 md:hidden">
+      {links.map((link) => (
+        <Link
+          key={link.href}
+          href={link.href}
+          aria-current={link.active ? "page" : undefined}
+          className={cn(
+            "shrink-0 rounded-full px-4 py-2 font-data text-sm font-medium transition-colors",
+            link.active ? "bg-navy-900 text-ivory-100" : "text-ink-700 hover:bg-ink-900/5",
+          )}
+        >
+          {link.label}
+        </Link>
+      ))}
+      <Link href="/" className="shrink-0 rounded-full px-4 py-2 font-data text-sm text-ink-300 hover:text-navy-900">
+        Site public
+      </Link>
+    </nav>
   );
 }

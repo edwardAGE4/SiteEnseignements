@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 /**
  * Affiche un texte saisi dans l'admin avec une mise en forme simple :
  * - une ligne vide separe deux paragraphes
- * - un retour a la ligne simple est conserve
+ * - un retour à la ligne simple est conserve
  * - "## Titre" en debut de ligne cree un sous-titre
  * - "- element" en debut de ligne cree une liste a puces
  * - **texte** met en gras
@@ -97,7 +97,7 @@ function Inline({ text }: { text: string }) {
   );
 }
 
-/** Titre sur plusieurs lignes : chaque retour a la ligne devient un <br />. */
+/** Titre sur plusieurs lignes : chaque retour à la ligne devient un <br />. */
 export function MultilineText({ text }: { text: string }) {
   return (
     <>

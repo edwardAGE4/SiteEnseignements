@@ -18,7 +18,7 @@ export function TeachingRowActions({
   const [isPending, startTransition] = useTransition();
 
   return (
-    <div className="flex items-center justify-end gap-4">
+    <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-4">
       <Link href={`/admin/enseignements/${id}/modifier`} className="font-data text-xs font-medium text-navy-900 hover:underline">
         Modifier
       </Link>
@@ -28,12 +28,12 @@ export function TeachingRowActions({
         onClick={() => startTransition(() => onTogglePublish(id))}
         className="font-data text-xs font-medium text-navy-900 hover:underline disabled:opacity-50"
       >
-        {status === "PUBLISHED" ? "Depublier" : "Publier"}
+        {status === "PUBLISHED" ? "Dépublier" : "Publier"}
       </button>
       <ConfirmDialog
         triggerLabel="Supprimer"
         title="Supprimer cet enseignement ?"
-        description="Cette action est irreversible. L'enseignement et ses fichiers associes seront definitivement supprimes."
+        description="Cette action est irréversible. L'enseignement et ses fichiers associés seront définitivement supprimés."
         confirmLabel="Supprimer"
         action={() => onDelete(id)}
       />

@@ -101,7 +101,7 @@ export function TeachingForm({
       const data = await uploadMedia("image", file, setCoverProgress);
       setCoverImageUrl(data.url);
     } catch (error) {
-      setUploadError(error instanceof Error ? error.message : "Echec de l'envoi de l'image.");
+      setUploadError(error instanceof Error ? error.message : "Échec de l'envoi de l'image.");
       input.value = "";
     } finally {
       setCoverProgress(null);
@@ -134,7 +134,7 @@ export function TeachingForm({
         const data = await uploadMedia("pdf", file, setPdfProgress);
         setDocuments((current) => [...current, { url: data.url, fileName: data.fileName }]);
       } catch (error) {
-        errors.push(`${file.name} : ${error instanceof Error ? error.message : "echec de l'envoi."}`);
+        errors.push(`${file.name} : ${error instanceof Error ? error.message : "échec de l'envoi."}`);
       }
     }
 
@@ -210,15 +210,15 @@ export function TeachingForm({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`https://i.ytimg.com/vi/${youtubeId}/mqdefault.jpg`}
-                alt="Apercu de la video"
+                alt="Aperçu de la vidéo"
                 className="h-16 w-28 rounded-lg object-cover"
               />
-              <p className="text-xs text-emerald-700">Video reconnue</p>
+              <p className="text-xs text-emerald-700">Vidéo reconnue</p>
             </div>
           ) : null}
           {youtubeUrl.trim() && !youtubeId ? (
             <p className="mt-1 text-xs text-orange-700">
-              Lien non reconnu : la video ne pourra pas etre affichee.
+              Lien non reconnu : la vidéo ne pourra pas être affichée.
             </p>
           ) : null}
         </Field>
@@ -238,12 +238,12 @@ export function TeachingForm({
                 <input
                   value={document.fileName}
                   onChange={(event) => updateDocument(index, event.target.value)}
-                  aria-label={`Nom affiche du document ${index + 1}`}
+                  aria-label={`Nom affiché du document ${index + 1}`}
                   required
                   className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-2 py-1 text-sm text-ink-900 hover:border-ink-900/15 focus:border-navy-900 focus:outline-none"
                 />
                 {document.id ? null : (
-                  <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs text-orange-800">non enregistre</span>
+                  <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs text-orange-800">non enregistré</span>
                 )}
                 <a href={document.url} target="_blank" rel="noreferrer" className="text-xs text-navy-900 underline">
                   Ouvrir
@@ -286,8 +286,8 @@ export function TeachingForm({
           className="block w-full text-sm text-ink-500 file:mr-4 file:rounded-full file:border-0 file:bg-navy-900 file:px-4 file:py-2 file:text-sm file:font-medium file:text-ivory-100"
         />
         <p className="mt-1 text-xs text-ink-300">
-          Vous pouvez selectionner plusieurs fichiers. 20 Mo maximum par fichier, {MAX_DOCUMENTS} documents maximum.
-          Les documents retires ne sont supprimes qu&apos;a l&apos;enregistrement.
+          Vous pouvez sélectionner plusieurs fichiers. 20 Mo maximum par fichier, {MAX_DOCUMENTS} documents maximum.
+          Les documents retirés ne sont supprimés qu&apos;à l&apos;enregistrement.
         </p>
         {pdfUploading ? <UploadProgress percent={pdfProgress} label={pdfQueueLabel} /> : null}
       </Field>
@@ -305,14 +305,14 @@ export function TeachingForm({
           {coverUploading ? <UploadProgress percent={coverProgress} /> : null}
           {coverImageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={coverImageUrl} alt="Apercu" className="mt-2 h-24 w-32 rounded-lg object-cover" />
+            <img src={coverImageUrl} alt="Aperçu" className="mt-2 h-24 w-32 rounded-lg object-cover" />
           ) : null}
         </Field>
       </div>
 
       {uploadError ? <Alert variant="error">{uploadError}</Alert> : null}
 
-      <Field label="Categories" error={state?.fieldErrors?.categoryIds}>
+      <Field label="Catégories" error={state?.fieldErrors?.categoryIds}>
         <div className="flex flex-wrap gap-3">
           {categories.map((category) => (
             <label key={category.id} className="flex items-center gap-2 rounded-full border border-ink-900/15 px-4 py-2 text-sm has-[:checked]:border-navy-900 has-[:checked]:bg-navy-900 has-[:checked]:text-ivory-100">
@@ -326,18 +326,18 @@ export function TeachingForm({
               {category.name}
             </label>
           ))}
-          {categories.length === 0 ? <p className="text-sm text-ink-300">Creez d&apos;abord une categorie.</p> : null}
+          {categories.length === 0 ? <p className="text-sm text-ink-300">Créez d&apos;abord une catégorie.</p> : null}
         </div>
       </Field>
 
-      <Field label="Tags (separes par des virgules)">
+      <Field label="Tags (séparés par des virgules)">
         <input name="tags" defaultValue={defaults.tags} placeholder="foi, transformation" className={inputClass} />
       </Field>
 
       <Field label="Statut">
         <select name="status" defaultValue={defaults.status} className={inputClass}>
           <option value="DRAFT">Brouillon</option>
-          <option value="PUBLISHED">Publie</option>
+          <option value="PUBLISHED">Publié</option>
         </select>
       </Field>
 
@@ -345,11 +345,11 @@ export function TeachingForm({
 
       <ConfirmSubmitButton
         disabled={isPending || coverUploading || pdfUploading}
-        title={isCreation ? "Creer cet enseignement ?" : "Enregistrer les modifications ?"}
+        title={isCreation ? "Créer cet enseignement ?" : "Enregistrer les modifications ?"}
         description={
           isCreation
-            ? "Le nouvel enseignement va etre enregistre en base de donnees."
-            : "Les modifications de cet enseignement vont etre enregistrees en base de donnees."
+            ? "Le nouvel enseignement va être enregistré en base de données."
+            : "Les modifications de cet enseignement vont être enregistrées en base de données."
         }
         className="rounded-full bg-navy-900 px-6 py-3 font-accent text-sm font-medium text-ivory-100 hover:bg-navy-800 disabled:opacity-60"
       >

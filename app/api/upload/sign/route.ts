@@ -32,7 +32,7 @@ const KINDS = {
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) {
-    return NextResponse.json({ error: "Non autorise." }, { status: 401 });
+    return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   }
 
   const body = (await request.json().catch(() => null)) as {
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
   const config = body?.kind === "image" || body?.kind === "pdf" ? KINDS[body.kind] : null;
   if (!config || typeof body?.fileName !== "string" || typeof body.size !== "number") {
-    return NextResponse.json({ error: "Requete d'envoi invalide." }, { status: 400 });
+    return NextResponse.json({ error: "Requête d'envoi invalide." }, { status: 400 });
   }
 
   const backends = getUploadBackends().filter((backend) => !(body.fallback && backend === "blob"));
@@ -55,14 +55,14 @@ export async function POST(request: Request) {
   if (!backend) {
     console.error(
       body.fallback
-        ? "[upload] Vercel Blob a refuse l'envoi et aucun stockage de secours S3 n'est configure."
-        : "[upload] Aucun stockage configure : connectez un store Vercel Blob au projet (et/ou les variables S3_*).",
+        ? "[upload] Vercel Blob a refusé l'envoi et aucun stockage de secours S3 n'est configuré."
+        : "[upload] Aucun stockage configuré : connectez un store Vercel Blob au projet (et/ou les variables S3_*).",
     );
     return NextResponse.json(
       {
         error: body.fallback
-          ? "Le stockage principal est plein ou indisponible et aucun stockage de secours n'est configure."
-          : "Stockage des fichiers non configure sur le serveur.",
+          ? "Le stockage principal est plein ou indisponible et aucun stockage de secours n'est configuré."
+          : "Stockage des fichiers non configuré sur le serveur.",
       },
       { status: 503 },
     );
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
   const contentType = String(body.contentType ?? "");
   if (!(config.types as readonly string[]).includes(contentType)) {
     return NextResponse.json(
-      { error: body.kind === "pdf" ? "Seuls les fichiers PDF sont acceptes." : "Formats acceptes : JPEG, PNG, WebP." },
+      { error: body.kind === "pdf" ? "Seuls les fichiers PDF sont acceptés." : "Formats acceptés : JPEG, PNG, WebP." },
       { status: 400 },
     );
   }
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("[upload] URL pre-signee impossible :", error);
     return NextResponse.json(
-      { error: "Stockage des fichiers mal configure (variables S3_*). Contactez l'administrateur." },
+      { error: "Stockage des fichiers mal configuré (variables S3_*). Contactez l'administrateur." },
       { status: 500 },
     );
   }

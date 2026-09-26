@@ -23,12 +23,12 @@ export async function savePastorPortrait(_prev: PortraitFormState, formData: For
 
   const url = String(formData.get("portraitUrl") ?? "");
   if (!url.startsWith("/uploads/images/") && !/^https?:\/\//.test(url)) {
-    return { error: "Selectionnez d'abord une photo a envoyer." };
+    return { error: "Sélectionnez d'abord une photo à envoyer." };
   }
 
   const previous = await getPastorPortraitUrl();
   if (previous === url) {
-    return { warnings: ["Cette photo est deja celle affichee sur le site."], portraitUrl: url };
+    return { warnings: ["Cette photo est déjà celle affichée sur le site."], portraitUrl: url };
   }
 
   await setSetting(SETTING_KEYS.pastorPortraitUrl, url);
@@ -36,7 +36,7 @@ export async function savePastorPortrait(_prev: PortraitFormState, formData: For
   revalidatePortraitPages();
 
   return {
-    success: "La photo du Pasteur Jean-Marc GNALI a ete mise a jour sur le site.",
+    success: "La photo du Pasteur Jean-Marc GNALI a été mise à jour sur le site.",
     portraitUrl: url,
   };
 }
@@ -102,9 +102,9 @@ export async function saveBiography(_prev: BiographyFormState, formData: FormDat
   revalidatePath("/admin/parametres");
 
   const warnings: string[] = [];
-  if (!body) warnings.push("La biographie detaillee est vide : seule l'introduction sera affichee.");
-  if (!quote) warnings.push("Aucune citation : le bandeau de citation sera masque sur la page A propos.");
-  if (quoteSource && !quote) warnings.push("Une source est renseignee sans citation : elle ne sera pas affichee.");
+  if (!body) warnings.push("La biographie détaillée est vide : seule l'introduction sera affichée.");
+  if (!quote) warnings.push("Aucune citation : le bandeau de citation sera masqué sur la page À propos.");
+  if (quoteSource && !quote) warnings.push("Une source est renseignée sans citation : elle ne sera pas affichée.");
 
-  return { success: "La biographie a ete mise a jour sur la page A propos.", warnings };
+  return { success: "La biographie a été mise à jour sur la page À propos.", warnings };
 }

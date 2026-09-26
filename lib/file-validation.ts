@@ -16,11 +16,11 @@ export function detectImageType(buffer: Buffer): "image/jpeg" | "image/png" | "i
 }
 
 export function validatePdfUpload(file: File | { size: number }): string | null {
-  if (file.size > MAX_PDF_SIZE) return "Le fichier PDF ne doit pas depasser 20 Mo.";
+  if (file.size > MAX_PDF_SIZE) return "Le fichier PDF ne doit pas dépasser 20 Mo.";
   return null;
 }
 
 export function validateImageUpload(file: File | { size: number }): string | null {
-  if (file.size > MAX_IMAGE_SIZE) return "L'image ne doit pas depasser 8 Mo.";
+  if (file.size > MAX_IMAGE_SIZE) return "L'image ne doit pas dépasser 8 Mo.";
   return null;
 }

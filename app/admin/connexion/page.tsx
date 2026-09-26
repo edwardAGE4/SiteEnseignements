@@ -23,7 +23,7 @@ export default async function LoginPage({
           Connexion
         </h1>
         <p className="mt-2 text-sm text-ink-500">
-          Reservee aux administrateurs et editeurs de la plateforme.
+          Réservée aux administrateurs et éditeurs de la plateforme.
         </p>
 
         <div className="mt-8">

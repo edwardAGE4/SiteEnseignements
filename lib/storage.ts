@@ -140,7 +140,7 @@ function getS3Client() {
 
 function getBucket() {
   const bucket = process.env.S3_BUCKET;
-  if (!bucket) throw new Error("S3_BUCKET n'est pas defini.");
+  if (!bucket) throw new Error("S3_BUCKET n'est pas défini.");
   return bucket;
 }
 
@@ -264,7 +264,7 @@ export async function uploadFile(
   prefix: UploadKind,
 ): Promise<string> {
   const backends = getUploadBackends();
-  if (backends.length === 0) throw new Error("Aucun stockage de fichiers configure.");
+  if (backends.length === 0) throw new Error("Aucun stockage de fichiers configuré.");
 
   let lastError: unknown;
   for (const backend of backends) {

@@ -20,7 +20,7 @@ export async function authenticate(
       if (error.type === "CredentialsSignin") {
         return { error: "E-mail ou mot de passe incorrect." };
       }
-      return { error: "Une erreur est survenue. Veuillez reessayer." };
+      return { error: "Une erreur est survenue. Veuillez réessayer." };
     }
     throw error;
   }

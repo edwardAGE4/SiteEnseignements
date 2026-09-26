@@ -13,7 +13,7 @@ export function PdfDocuments({ slug, documents }: { slug: string; documents: Doc
       <p className="font-display text-lg font-semibold text-navy-900">
         {documents.length > 1 ? `Documents PDF (${documents.length})` : "Document PDF"}
       </p>
-      <p className="text-sm text-ink-500">Retrouvez cet enseignement au format ecrit.</p>
+      <p className="text-sm text-ink-500">Retrouvez cet enseignement au format écrit.</p>
 
       <ul className="mt-4 divide-y divide-ink-900/10">
         {documents.map((document) => {
@@ -33,7 +33,7 @@ export function PdfDocuments({ slug, documents }: { slug: string; documents: Doc
                   download
                   className={buttonClassName({ variant: "outline", size: "sm" })}
                 >
-                  Telecharger
+                  Télécharger
                   <span className="sr-only"> {document.fileName}</span>
                 </a>
                 <LikeButton target={`pdf:${document.id}`} label={document.fileName} />

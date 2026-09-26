@@ -14,9 +14,9 @@ const FORMATS: { value: string; label: string }[] = [
 ];
 
 const SORTS: { value: string; label: string }[] = [
-  { value: "recent", label: "Plus recents" },
-  { value: "popular", label: "Plus consultes" },
-  { value: "alpha", label: "Alphabetique" },
+  { value: "recent", label: "Plus récents" },
+  { value: "popular", label: "Plus consultés" },
+  { value: "alpha", label: "Alphabétique" },
 ];
 
 /** Les filtres multiples sont stockes dans l'URL separes par des virgules. */
@@ -82,8 +82,8 @@ export function SearchAndFilters({ categories }: { categories: Category[] }) {
 
       <div className="flex flex-wrap items-end gap-4">
         <MultiSelect
-          label="Categories"
-          allLabel="Toutes les categories"
+          label="Catégories"
+          allLabel="Toutes les catégories"
           options={categories.map((category) => ({ value: category.slug, label: category.name }))}
           selected={activeCategories}
           onChange={(values) => updateParam("categorie", values.join(",") || null)}
@@ -103,7 +103,7 @@ export function SearchAndFilters({ categories }: { categories: Category[] }) {
             onClick={resetFilters}
             className="py-2.5 font-accent text-sm text-navy-900 underline-offset-4 hover:underline"
           >
-            Reinitialiser
+            Réinitialiser
           </button>
         ) : null}
 

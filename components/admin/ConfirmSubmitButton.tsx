@@ -10,7 +10,7 @@ import { Modal } from "@/components/admin/Modal";
 export function ConfirmSubmitButton({
   children,
   title = "Confirmer l'enregistrement ?",
-  description = "Les informations saisies vont etre enregistrees en base de donnees.",
+  description = "Les informations saisies vont être enregistrées en base de données.",
   confirmLabel = "Confirmer",
   disabled,
   className,

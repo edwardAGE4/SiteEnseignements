@@ -57,9 +57,9 @@ export function UserForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label className="font-data text-xs font-medium uppercase tracking-wide text-ink-500">Role</label>
+          <label className="font-data text-xs font-medium uppercase tracking-wide text-ink-500">Rôle</label>
           <select name="role" defaultValue={defaults?.role ?? "EDITOR"} className={inputClass}>
-            <option value="EDITOR">Editeur</option>
+            <option value="EDITOR">Éditeur</option>
             <option value="ADMIN">Administrateur</option>
           </select>
         </div>
@@ -90,15 +90,15 @@ export function UserForm({
 
       <ConfirmSubmitButton
         disabled={isPending}
-        title={mode === "create" ? "Creer cet utilisateur ?" : "Mettre a jour cet utilisateur ?"}
+        title={mode === "create" ? "Créer cet utilisateur ?" : "Mettre à jour cet utilisateur ?"}
         description={
           mode === "create"
-            ? "Un nouveau compte va etre enregistre en base de donnees."
-            : "Les modifications de ce compte vont etre enregistrees en base de donnees."
+            ? "Un nouveau compte va être enregistré en base de données."
+            : "Les modifications de ce compte vont être enregistrées en base de données."
         }
         className="rounded-full bg-navy-900 px-5 py-2.5 font-data text-sm font-medium text-ivory-100 hover:bg-navy-800 disabled:opacity-60"
       >
-        {isPending ? "..." : mode === "create" ? "Creer l'utilisateur" : "Mettre a jour"}
+        {isPending ? "..." : mode === "create" ? "Créer l'utilisateur" : "Mettre à jour"}
       </ConfirmSubmitButton>
     </form>
   );

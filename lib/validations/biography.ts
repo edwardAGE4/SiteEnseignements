@@ -4,7 +4,7 @@ const text = (max: number, label: string) =>
   z
     .string()
     .trim()
-    .max(max, `${label} : ${max} caracteres maximum.`)
+    .max(max, `${label} : ${max} caractères maximum.`)
     .transform((value) => value.replace(/\r\n/g, "\n"));
 
 export const BIOGRAPHY_LIMITS = { title: 120, lead: 500, body: 20000, quote: 400, quoteSource: 120 };

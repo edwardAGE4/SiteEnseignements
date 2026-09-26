@@ -18,7 +18,7 @@ export default async function NewTeachingPage() {
         <p className="mt-1 text-sm text-ink-500">Remplissez les informations puis enregistrez.</p>
       </div>
 
-      <TeachingForm categories={categories} action={createTeaching} submitLabel="Creer l'enseignement" />
+      <TeachingForm categories={categories} action={createTeaching} submitLabel="Créer l'enseignement" />
     </div>
   );
 }

@@ -33,7 +33,7 @@ export function Pagination({
           href={hrefFor(page - 1)}
           className="rounded-full border border-ink-900/15 px-4 py-2 text-sm text-ink-700 hover:border-navy-900"
         >
-          Precedent
+          Précédent
         </Link>
       ) : null}
 

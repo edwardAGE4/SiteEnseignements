@@ -36,7 +36,7 @@ export function TeachingCard({ teaching }: { teaching: TeachingCardData }) {
         <h3 className="font-display text-xl font-semibold leading-snug text-navy-900 transition-colors group-hover:text-navy-700">
           {teaching.title}
         </h3>
-        <p className="text-sm leading-relaxed text-ink-500">
+        <p className="text-justify hyphens-auto text-sm leading-relaxed text-ink-500 md:text-left">
           {truncate(teaching.description, 110)}
         </p>
         <div className="flex items-center gap-2 pt-1 font-data text-xs text-ink-300">
@@ -45,7 +45,7 @@ export function TeachingCard({ teaching }: { teaching: TeachingCardData }) {
           <span>Enseignement</span>
         </div>
         <span className="inline-flex items-center gap-1 pt-2 font-accent text-sm font-medium text-navy-900 transition-colors group-hover:text-gold-600">
-          Decouvrir
+          Découvrir
           <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
         </span>
       </div>

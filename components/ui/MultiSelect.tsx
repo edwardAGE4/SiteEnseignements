@@ -113,7 +113,7 @@ export function MultiSelect({
               onClick={() => onChange([])}
               className="w-full border-t border-ink-900/10 px-4 py-2.5 text-left text-xs font-medium text-navy-900 hover:bg-ivory-200"
             >
-              Tout deselectionner
+              Tout désélectionner
             </button>
           ) : null}
         </div>

@@ -81,7 +81,7 @@ export default async function TeachingDetailPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
       <Container className="max-w-3xl pb-16">
-        <nav className="mb-8 flex flex-wrap items-center gap-2">
+        <nav className="mb-8 flex flex-wrap items-center justify-center gap-2">
           {teaching.categories.map(({ category }) => (
             <Link key={category.id} href={`/categories/${category.slug}`}>
               <Tag>{category.name}</Tag>
@@ -89,17 +89,17 @@ export default async function TeachingDetailPage({
           ))}
         </nav>
 
-        <h1 className="font-display text-balance text-[clamp(2rem,4.5vw,3rem)] font-semibold leading-[1.1] text-navy-900">
+        <h1 className="text-center font-display text-balance text-[clamp(2rem,4.5vw,3rem)] font-semibold leading-[1.1] text-navy-900">
           {teaching.title}
         </h1>
 
-        <div className="mt-4 flex items-center gap-3 font-data text-sm text-ink-500">
+        <div className="mt-4 flex items-center justify-center gap-3 font-data text-sm text-ink-500">
           <span>{formatDate(teaching.publishedAt)}</span>
           <span>·</span>
           <span>{teaching.viewCount} vue{teaching.viewCount > 1 ? "s" : ""}</span>
         </div>
 
-        <p className="prose-editorial mt-8 text-lg leading-relaxed text-ink-700">
+        <p className="prose-editorial mx-auto mt-8 text-justify hyphens-auto text-lg leading-relaxed text-ink-700 md:text-left">
           {teaching.description}
         </p>
       </Container>
@@ -110,7 +110,7 @@ export default async function TeachingDetailPage({
             <div className="space-y-3">
               <VideoEmbed url={teaching.youtubeUrl} />
               <div className="flex justify-end">
-                <LikeButton target="youtube" label="la video" />
+                <LikeButton target="youtube" label="la vidéo" />
               </div>
             </div>
           ) : null}
@@ -126,7 +126,7 @@ export default async function TeachingDetailPage({
         </LikesProvider>
 
         {teaching.tags.length > 0 ? (
-          <div className="flex flex-wrap gap-2 pt-4">
+          <div className="flex flex-wrap justify-center gap-2 pt-4">
             {teaching.tags.map((tag) => (
               <span
                 key={tag}
@@ -142,7 +142,7 @@ export default async function TeachingDetailPage({
       {related.length > 0 ? (
         <section className="bg-ivory-200 py-24">
           <Container>
-            <SectionHeading eyebrow="A decouvrir aussi" title="Vous pourriez egalement decouvrir" />
+            <SectionHeading eyebrow="À découvrir aussi" title="Vous pourriez également découvrir" />
             <div className="mt-14">
               <TeachingGrid teachings={related} />
             </div>

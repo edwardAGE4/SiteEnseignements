@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 
 export const metadata: Metadata = {
-  title: "Politique de confidentialite",
+  title: "Politique de confidentialité",
   alternates: { canonical: "/confidentialite" },
   robots: { index: false, follow: true },
 };
@@ -10,21 +10,21 @@ export const metadata: Metadata = {
 export default function PrivacyPolicyPage() {
   return (
     <div className="pt-32 pb-28">
-      <Container className="prose-editorial max-w-2xl space-y-4 text-ink-700">
-        <h1 className="font-display text-3xl font-semibold text-navy-900">
-          Politique de confidentialite
+      <Container className="prose-editorial max-w-2xl space-y-4 text-justify hyphens-auto text-ink-700 md:text-left">
+        <h1 className="text-center font-display text-3xl font-semibold text-navy-900">
+          Politique de confidentialité
         </h1>
         <p>
-          La plateforme utilise un cookie technique strictement necessaire pour
-          eviter de comptabiliser plusieurs fois la consultation d&apos;un meme
-          enseignement par un meme visiteur. Aucune donnee personnelle
-          n&apos;est collectee au-dela de ce qui est necessaire au bon
+          La plateforme utilise un cookie technique strictement nécessaire pour
+          éviter de comptabiliser plusieurs fois la consultation d&apos;un même
+          enseignement par un même visiteur. Aucune donnée personnelle
+          n&apos;est collectée au-delà de ce qui est nécessaire au bon
           fonctionnement du site.
         </p>
         <p>
-          Ce texte est un modele a completer et valider avec le proprietaire
+          Ce texte est un modèle à compléter et valider avec le propriétaire
           de la plateforme avant mise en production, notamment concernant les
-          obligations legales applicables (RGPD ou autre reglementation
+          obligations légales applicables (RGPD ou autre réglementation
           locale).
         </p>
       </Container>

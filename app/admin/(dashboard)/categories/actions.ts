@@ -10,7 +10,7 @@ export type CategoryFormState =
   | undefined;
 
 function categoryWarnings(description?: string) {
-  return description ? [] : ["Aucune description : la page de la categorie sera moins explicite pour les visiteurs."];
+  return description ? [] : ["Aucune description : la page de la catégorie sera moins explicite pour les visiteurs."];
 }
 
 export async function createCategory(
@@ -35,7 +35,7 @@ export async function createCategory(
     where: { OR: [{ slug: parsed.data.slug }, { name: parsed.data.name }] },
   });
   if (existing) {
-    return { error: "Une categorie avec ce nom ou ce slug existe deja." };
+    return { error: "Une catégorie avec ce nom ou ce slug existe déjà." };
   }
 
   const maxOrder = await prisma.category.aggregate({ _max: { order: true } });
@@ -48,7 +48,7 @@ export async function createCategory(
   revalidatePath("/categories");
   revalidatePath("/");
   return {
-    success: `La categorie "${parsed.data.name}" a ete creee avec succes.`,
+    success: `La catégorie "${parsed.data.name}" a été créée avec succès.`,
     warnings: categoryWarnings(parsed.data.description),
   };
 }
@@ -76,7 +76,7 @@ export async function updateCategory(
     where: { OR: [{ slug: parsed.data.slug }, { name: parsed.data.name }], NOT: { id } },
   });
   if (existing) {
-    return { error: "Une categorie avec ce nom ou ce slug existe deja." };
+    return { error: "Une catégorie avec ce nom ou ce slug existe déjà." };
   }
 
   await prisma.category.update({ where: { id }, data: parsed.data });
@@ -85,7 +85,7 @@ export async function updateCategory(
   revalidatePath("/categories");
   revalidatePath("/");
   return {
-    success: `La categorie "${parsed.data.name}" a ete mise a jour.`,
+    success: `La catégorie "${parsed.data.name}" a été mise à jour.`,
     warnings: categoryWarnings(parsed.data.description),
   };
 }

@@ -21,7 +21,7 @@ export async function generateMetadata({
   if (!category) return {};
   return {
     title: category.name,
-    description: category.description ?? `Enseignements de la categorie ${category.name}.`,
+    description: category.description ?? `Enseignements de la catégorie ${category.name}.`,
     alternates: { canonical: `/categories/${category.slug}` },
   };
 }
@@ -45,11 +45,11 @@ export default async function CategoryDetailPage({
   return (
     <div className="pt-32 pb-28">
       <Container>
-        <SectionHeading eyebrow="Categorie" title={category.name} />
+        <SectionHeading eyebrow="Catégorie" title={category.name} />
         {category.description ? (
-          <p className="mt-4 max-w-2xl text-ink-500">{category.description}</p>
+          <p className="mx-auto mt-4 max-w-2xl text-justify hyphens-auto text-ink-500 md:text-center">{category.description}</p>
         ) : null}
-        <p className="mt-2 font-data text-sm text-ink-300">
+        <p className="mt-2 text-center font-data text-sm text-ink-300">
           {total} enseignement{total > 1 ? "s" : ""}
         </p>
 

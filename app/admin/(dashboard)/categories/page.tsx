@@ -5,7 +5,7 @@ import { CategoryList } from "@/components/admin/CategoryList";
 import { createCategory } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Categories",
+  title: "Catégories",
   robots: { index: false, follow: false },
 };
 
@@ -15,16 +15,16 @@ export default async function AdminCategoriesPage() {
   return (
     <div className="max-w-3xl space-y-10">
       <div>
-        <h1 className="font-display text-2xl font-semibold text-navy-900">Categories</h1>
+        <h1 className="font-display text-2xl font-semibold text-navy-900">Catégories</h1>
         <p className="mt-1 text-sm text-ink-500">
-          Glissez-deposez une categorie pour modifier son ordre d&apos;affichage.
+          Glissez-déposez une catégorie pour modifier son ordre d&apos;affichage.
         </p>
       </div>
 
       <div className="rounded-2xl border border-ink-900/10 bg-ivory-50 p-6">
-        <h2 className="font-display text-lg font-semibold text-navy-900">Nouvelle categorie</h2>
+        <h2 className="font-display text-lg font-semibold text-navy-900">Nouvelle catégorie</h2>
         <div className="mt-4">
-          <CategoryForm action={createCategory} submitLabel="Creer la categorie" />
+          <CategoryForm action={createCategory} submitLabel="Créer la catégorie" />
         </div>
       </div>
 

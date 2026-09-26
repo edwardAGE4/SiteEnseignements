@@ -22,11 +22,11 @@ export default async function AdminDashboardPage() {
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
         <StatsCard label="Total enseignements" value={stats.totalTeachings} />
-        <StatsCard label="Publies" value={stats.publishedTeachings} />
+        <StatsCard label="Publiés" value={stats.publishedTeachings} />
         <StatsCard label="Brouillons" value={stats.draftTeachings} />
         <StatsCard label="Vues" value={stats.totalViews} />
-        <StatsCard label="Telechargements PDF" value={stats.totalDownloads} />
-        <StatsCard label="Categories" value={stats.totalCategories} />
+        <StatsCard label="Téléchargements PDF" value={stats.totalDownloads} />
+        <StatsCard label="Catégories" value={stats.totalCategories} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -51,7 +51,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         <div className="rounded-2xl border border-ink-900/10 bg-ivory-50 p-6">
-          <h2 className="font-display text-lg font-semibold text-navy-900">Repartition par categorie</h2>
+          <h2 className="font-display text-lg font-semibold text-navy-900">Répartition par catégorie</h2>
           <ul className="mt-4 divide-y divide-ink-900/10">
             {stats.categoryCounts.map((category) => (
               <li key={category.id} className="flex items-center justify-between py-3 text-sm">
@@ -60,14 +60,14 @@ export default async function AdminDashboardPage() {
               </li>
             ))}
             {stats.categoryCounts.length === 0 ? (
-              <li className="py-3 text-sm text-ink-300">Aucune categorie pour le moment.</li>
+              <li className="py-3 text-sm text-ink-300">Aucune catégorie pour le moment.</li>
             ) : null}
           </ul>
         </div>
       </div>
 
       <div className="rounded-2xl border border-ink-900/10 bg-ivory-50 p-6">
-        <h2 className="font-display text-lg font-semibold text-navy-900">Activite recente</h2>
+        <h2 className="font-display text-lg font-semibold text-navy-900">Activité récente</h2>
         <ul className="mt-4 divide-y divide-ink-900/10">
           {stats.recentTeachings.map((teaching) => (
             <li key={teaching.id} className="flex items-center justify-between gap-4 py-3">
@@ -81,7 +81,7 @@ export default async function AdminDashboardPage() {
             </li>
           ))}
           {stats.recentTeachings.length === 0 ? (
-            <li className="py-3 text-sm text-ink-300">Aucune activite pour le moment.</li>
+            <li className="py-3 text-sm text-ink-300">Aucune activité pour le moment.</li>
           ) : null}
         </ul>
       </div>

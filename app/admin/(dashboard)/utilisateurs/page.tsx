@@ -22,7 +22,7 @@ export default async function AdminUsersPage() {
     <div className="max-w-3xl space-y-10">
       <div>
         <h1 className="font-display text-2xl font-semibold text-navy-900">Utilisateurs</h1>
-        <p className="mt-1 text-sm text-ink-500">Reserve aux administrateurs.</p>
+        <p className="mt-1 text-sm text-ink-500">Réservé aux administrateurs.</p>
       </div>
 
       <div className="rounded-2xl border border-ink-900/10 bg-ivory-50 p-6">

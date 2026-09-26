@@ -32,11 +32,11 @@ export function getPastorPortraitUrl() {
 /** Textes affiches tant que la biographie n'a pas ete renseignee dans l'admin. */
 export const DEFAULT_BIOGRAPHY = {
   title: "Une mission.\nUne transmission.",
-  lead: "Un contenu a completer par le proprietaire du site.",
+  lead: "Un contenu à compléter par le propriétaire du site.",
   body:
-    "Cette page est prevue pour accueillir le parcours, la vision et la vocation d'enseignement du Pasteur Jean-Marc GNALI, redige a la maniere d'un recit editorial plutot que d'une fiche administrative.\n\n" +
-    "Conformement aux exigences du projet, aucune information biographique n'a ete inventee : le texte definitif doit etre fourni par le Pasteur Jean-Marc GNALI ou par le proprietaire de la plateforme, puis integre ici.",
-  quote: "La transmission commence toujours par une comprehension nouvelle.",
+    "Cette page est prévue pour accueillir le parcours, la vision et la vocation d'enseignement du Pasteur Jean-Marc GNALI, rédigé à la manière d'un récit éditorial plutôt que d'une fiche administrative.\n\n" +
+    "Conformément aux exigences du projet, aucune information biographique n'a été inventée : le texte définitif doit être fourni par le Pasteur Jean-Marc GNALI ou par le propriétaire de la plateforme, puis intégré ici.",
+  quote: "La transmission commence toujours par une compréhension nouvelle.",
   quoteSource: "",
 };
 
