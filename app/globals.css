@@ -57,8 +57,8 @@
 
   --font-sans: var(--font-nunito);
   --font-display: var(--font-poppins);
-  --font-accent: var(--font-quicksand);
-  --font-data: var(--font-manrope);
+  --font-accent: var(--font-nunito);
+  --font-data: var(--font-nunito);
 
   --animate-fade-up: fade-up 0.7s ease forwards;
   --animate-fade-in: fade-in 0.9s ease forwards;

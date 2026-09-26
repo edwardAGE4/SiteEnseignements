@@ -10,7 +10,7 @@ export function Footer() {
             Pasteur Jean-Marc GNALI
           </p>
           <p className="max-w-sm text-sm leading-relaxed text-ivory-100/70">
-            Une plateforme dediee aux enseignements du Pasteur Jean-Marc GNALI —
+            Une plateforme dédiée aux enseignements du Pasteur Jean-Marc GNALI —
             pour comprendre, grandir et transmettre.
           </p>
         </div>
@@ -21,8 +21,8 @@ export function Footer() {
           </p>
           <nav className="flex flex-col gap-2 text-sm">
             <Link href="/enseignements" className="hover:text-gold-300">Enseignements</Link>
-            <Link href="/categories" className="hover:text-gold-300">Categories</Link>
-            <Link href="/a-propos" className="hover:text-gold-300">A propos</Link>
+            <Link href="/categories" className="hover:text-gold-300">Catégories</Link>
+            <Link href="/a-propos" className="hover:text-gold-300">À propos</Link>
           </nav>
         </div>
 
@@ -31,8 +31,8 @@ export function Footer() {
             Informations
           </p>
           <nav className="flex flex-col gap-2 text-sm">
-            <Link href="/mentions-legales" className="hover:text-gold-300">Mentions legales</Link>
-            <Link href="/confidentialite" className="hover:text-gold-300">Politique de confidentialite</Link>
+            <Link href="/mentions-legales" className="hover:text-gold-300">Mentions légales</Link>
+            <Link href="/confidentialite" className="hover:text-gold-300">Politique de confidentialité</Link>
             <Link href="/admin" className="hover:text-gold-300">Espace administrateur</Link>
           </nav>
         </div>
@@ -40,7 +40,7 @@ export function Footer() {
 
       <div className="border-t border-ivory-100/10">
         <Container className="flex flex-col items-center justify-between gap-2 py-6 text-xs text-ivory-100/50 md:flex-row">
-          <p>© {new Date().getFullYear()} Pasteur Jean-Marc GNALI. Tous droits reserves.</p>
+          <p>© {new Date().getFullYear()} Pasteur Jean-Marc GNALI. Tous droits réservés.</p>
           <p>Enseignements — Foi — Transmission</p>
         </Container>
       </div>
