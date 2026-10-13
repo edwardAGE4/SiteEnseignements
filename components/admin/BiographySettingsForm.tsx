@@ -51,18 +51,17 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
   return (
     <div className="grid gap-8 xl:grid-cols-2">
       <form onSubmit={submitWithoutReset(formAction)} className="space-y-5">
-        <FieldBlock label="Titre de la page" hint="Grand titre du bandeau. Un retour à la ligne = une nouvelle ligne." count={values.title} max={BIOGRAPHY_LIMITS.title} error={errors.title}>
+        <FieldBlock label="Accroche" hint="Phrase affichée sous le nom « Jean-Marc GNALI ». Facultative." count={values.title} max={BIOGRAPHY_LIMITS.title} error={errors.title}>
           <textarea
             name="title"
             rows={2}
-            required
             value={values.title}
             onChange={(event) => update("title", event.target.value)}
             className={inputClass}
           />
         </FieldBlock>
 
-        <FieldBlock label="Introduction" hint="Phrase d'accroche mise en valeur au début du texte. Optionnelle." count={values.lead} max={BIOGRAPHY_LIMITS.lead} error={errors.lead}>
+        <FieldBlock label="Introduction" hint="Paragraphe d'introduction mis en valeur. Facultatif." count={values.lead} max={BIOGRAPHY_LIMITS.lead} error={errors.lead}>
           <textarea
             name="lead"
             rows={3}
@@ -95,8 +94,18 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
           </p>
         </FieldBlock>
 
+        <FieldBlock label="Démarche de transmission et d'enseignement" hint="Section « Ma démarche ». Vide = masquée. Même mise en forme que la biographie." count={values.approach} max={BIOGRAPHY_LIMITS.approach} error={errors.approach}>
+          <textarea
+            name="approach"
+            rows={6}
+            value={values.approach}
+            onChange={(event) => update("approach", event.target.value)}
+            className={inputClass}
+          />
+        </FieldBlock>
+
         <div className="grid gap-5 sm:grid-cols-[2fr_1fr]">
-          <FieldBlock label="Citation" hint="Bandeau en bas de page. Vide = masqué." count={values.quote} max={BIOGRAPHY_LIMITS.quote} error={errors.quote}>
+          <FieldBlock label="Citation" hint="Bandeau mis en valeur. Vide = masqué." count={values.quote} max={BIOGRAPHY_LIMITS.quote} error={errors.quote}>
             <textarea
               name="quote"
               rows={2}
@@ -105,7 +114,7 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
               className={inputClass}
             />
           </FieldBlock>
-          <FieldBlock label="Source" hint="Ex. : Pasteur Jean-Marc GNALI" count={values.quoteSource} max={BIOGRAPHY_LIMITS.quoteSource} error={errors.quoteSource}>
+          <FieldBlock label="Source" hint="Facultatif" count={values.quoteSource} max={BIOGRAPHY_LIMITS.quoteSource} error={errors.quoteSource}>
             <input
               name="quoteSource"
               value={values.quoteSource}
@@ -119,7 +128,7 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
 
         <ConfirmSubmitButton
           disabled={isPending}
-          title="Publier la biographie ?"
+          title="Publier ces textes ?"
           description="Le contenu de la page À propos sera remplacé par ce texte."
           className="rounded-full bg-navy-900 px-5 py-2.5 font-data text-sm font-medium text-ivory-100 hover:bg-navy-800 disabled:opacity-60"
         >
@@ -133,10 +142,15 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
           <div className="bg-navy-950 px-6 py-8">
             <p className="font-accent text-[10px] font-semibold uppercase tracking-[0.3em] text-gold-400">À propos</p>
             <p className="mt-3 font-display text-3xl font-semibold leading-[1.1] text-ivory-100">
-              <MultilineText text={values.title || " "} />
+              Jean-Marc GNALI
             </p>
           </div>
           <div className="max-h-[32rem] space-y-5 overflow-y-auto bg-ivory-100 px-6 py-8 text-base leading-relaxed text-ink-700">
+            {values.title ? (
+              <p className="font-display text-lg italic text-navy-700">
+                <MultilineText text={values.title} />
+              </p>
+            ) : null}
             {values.lead ? (
               <p className="font-display text-xl font-semibold leading-snug text-navy-900">
                 <MultilineText text={values.lead} />
@@ -145,7 +159,7 @@ export function BiographySettingsForm({ initial }: { initial: Biography }) {
             {values.body ? (
               <RichText text={values.body} className="space-y-5" />
             ) : (
-              <p className="text-sm italic text-ink-300">Biographie vide</p>
+              <p className="text-sm italic text-ink-500">Biographie vide (section masquée)</p>
             )}
           </div>
           {values.quote ? (

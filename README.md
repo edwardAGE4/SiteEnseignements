@@ -1,108 +1,101 @@
-# Plateforme des enseignements du Pasteur Jean-Marc GNALI
+# Espace média de Jean-Marc GNALI
 
-Plateforme editoriale premium pour decouvrir, rechercher et consulter les
-enseignements du Pasteur Jean-Marc GNALI (video YouTube, audio Spotify,
-documents PDF), avec un back-office complet pour gerer le contenu.
+Site éditorial pour découvrir gratuitement des ressources multiformats —
+**audios, vidéos, livres et fichiers pratiques** — avec un back-office complet
+pour les gérer sans toucher au code.
 
 ## Stack technique
 
 - **Framework** : Next.js 16 (App Router, Turbopack), React 19, TypeScript
-- **Style** : Tailwind CSS v4 (theme CSS-first), polices Nunito / Poppins / Quicksand / Manrope
-- **Base de donnees** : PostgreSQL + Prisma 7 (client genere avec l'adaptateur `@prisma/adapter-pg`)
-- **Authentification** : Auth.js (NextAuth v5), Credentials + sessions JWT, roles ADMIN/EDITOR
-- **Stockage fichiers** : abstraction S3-compatible (AWS S3, Supabase Storage, ...), fallback local en developpement
+- **Style** : Tailwind CSS v4 (thème CSS-first), polices Fraunces (titres) et Manrope (texte)
+- **Base de données** : PostgreSQL + Prisma 7 (client généré avec `@prisma/adapter-pg`)
+- **Authentification** : Auth.js (NextAuth v5), Credentials + sessions JWT, rôles ADMIN / EDITOR
+- **Stockage des fichiers** : Vercel Blob (principal), S3 / Supabase (secours), dossier local en développement
 
-## Demarrage rapide
+## Rubriques publiques
 
-### 1. Pre-requis
+| URL                              | Contenu                                                  |
+| -------------------------------- | -------------------------------------------------------- |
+| `/`                              | Accueil : présentation, 4 familles de ressources, nouveautés |
+| `/a-propos`                      | Présentation de Jean-Marc GNALI (administrable)          |
+| `/audios`, `/audios/[slug]`      | Bibliothèque audio, lecteur HTML5 et/ou Spotify          |
+| `/videos`, `/videos/[slug]`      | Bibliothèque vidéo, lecteur YouTube / Vimeo              |
+| `/livres`, `/livres/[slug]`      | Livres et publications                                   |
+| `/fichiers-pratiques`, `/[slug]` | Documents consultables / téléchargeables                 |
+| `/recherche`                     | Recherche transversale (titre, description, mot-clé, catégorie, format) |
+| `/categories`, `/categories/[slug]` | Parcours par thématique                               |
 
-- Node.js 20.9+
-- Une base PostgreSQL accessible
+Les anciennes URL sont conservées : `/enseignements` redirige vers
+`/recherche` et `/enseignements/[slug]` vers la fiche de la ressource dans sa
+rubrique (redirections permanentes).
 
-### 2. Installation
+## Modèle de données
+
+Le modèle historique `Teaching` (table `teachings`) est devenu le modèle
+unifié des ressources, sans perte de données :
+
+- `type` : `AUDIO`, `VIDEO`, `BOOK`, `FILE` (déduit des médias existants lors de la migration) ;
+- champs communs : titre, slug, description courte/longue, image, catégories, mots-clés,
+  statut (`DRAFT`, `PUBLISHED`, `ARCHIVED`), mise en avant, date de publication, SEO ;
+- audio : `audioUrl`, `spotifyUrl`, durée, série ; vidéo : `videoUrl` (YouTube/Vimeo, colonne
+  historique `youtubeUrl`) ; livre : sous-titre, auteur, ISBN, formats, liens de lecture/achat ;
+- fichiers joints (`teaching_documents`) avec type MIME et taille, politique de téléchargement.
+
+Migration : `prisma/migrations/20261013120000_media_resources` (ajouts uniquement).
+
+## Démarrage rapide
 
 ```bash
 npm install
-cp .env.example .env
-# Renseignez DATABASE_URL, AUTH_SECRET (openssl rand -base64 32), etc.
-```
-
-### 3. Base de donnees
-
-```bash
-npm run db:migrate   # applique le schema Prisma
-npm run db:seed      # cree des donnees de demonstration (comptes, categories, enseignements)
-```
-
-Comptes de demonstration crees par le seed :
-
-| Role  | E-mail              | Mot de passe   |
-| ----- | -------------------- | -------------- |
-| ADMIN | admin@demo.local      | ChangeMoi123!  |
-| EDITOR| editeur@demo.local    | ChangeMoi123!  |
-
-**Ces comptes et ce contenu sont fictifs.** Changez les mots de passe et
-remplacez le contenu de demonstration avant toute mise en production.
-
-### 4. Lancer le serveur de developpement
-
-```bash
+cp .env.example .env          # renseignez DATABASE_URL, AUTH_SECRET (openssl rand -base64 32)
+docker compose up -d          # PostgreSQL local (optionnel)
+npm run db:migrate            # applique le schéma
+ADMIN_EMAIL=... ADMIN_NAME=... ADMIN_PASSWORD=... npm run db:create-admin   # crée un administrateur
 npm run dev
 ```
 
-Ouvrez [http://localhost:3000](http://localhost:3000) pour le site public et
-[http://localhost:3000/admin/connexion](http://localhost:3000/admin/connexion)
-pour le back-office.
+Données de démonstration (développement uniquement, refusé en production) :
 
-## Scripts disponibles
-
-| Commande             | Description                                   |
-| --------------------- | ---------------------------------------------- |
-| `npm run dev`          | Serveur de developpement                       |
-| `npm run build`        | Build de production (genere le client Prisma) |
-| `npm run start`        | Lance le build de production                  |
-| `npm run lint`         | Verification ESLint                            |
-| `npm run db:migrate`   | Applique les migrations Prisma en developpement |
-| `npm run db:deploy`    | Applique les migrations Prisma en production   |
-| `npm run db:seed`      | Charge les donnees de demonstration            |
-| `npm run db:studio`    | Ouvre Prisma Studio                            |
-
-## Structure du projet
-
-```text
-app/
-  (public)/          Pages publiques (accueil, enseignements, categories, a-propos)
-  admin/
-    connexion/        Page de connexion (hors garde d'authentification)
-    (dashboard)/       Back-office protege (tableau de bord, CRUD)
-  api/                 Routes API (auth, uploads, vues, telechargements)
-components/
-  ui/                  Composants generiques reutilisables
-  public/              Composants du site public
-  admin/               Composants du back-office
-lib/                   Acces donnees, validations, stockage, auth, utilitaires
-prisma/                Schema, migrations, seed
-docs/                  Documentation administrateur
+```bash
+SEED_DEMO_PASSWORD="un-mot-de-passe-long" npm run db:seed
 ```
+
+Site public : <http://localhost:3000> — back-office : <http://localhost:3000/admin/connexion>.
+
+## Scripts
+
+| Commande                  | Description                                     |
+| ------------------------- | ----------------------------------------------- |
+| `npm run dev`             | Serveur de développement                        |
+| `npm run build`           | Build de production (génère le client Prisma)   |
+| `npm run vercel-build`    | Build Vercel : génération + `migrate deploy` + build |
+| `npm run lint`            | ESLint                                          |
+| `npm run db:migrate`      | Migrations Prisma en développement              |
+| `npm run db:deploy`       | Migrations Prisma en production                 |
+| `npm run db:seed`         | Données de démonstration (dev uniquement)       |
 
 ## Stockage des fichiers
 
-Par defaut (`STORAGE_PROVIDER=s3`), les images et PDF sont envoyes vers un
-bucket compatible S3 (AWS S3, Supabase Storage, etc.) via les variables
-`S3_*`. En developpement sans identifiants cloud, `STORAGE_PROVIDER=local`
-ecrit les fichiers dans `public/uploads/` (a ne jamais utiliser en
-production, ce dossier n'est pas suivi par git).
+Types acceptés (contrôle de l'extension, du type MIME, de la taille et de la
+signature binaire réelle) :
+
+| Type     | Formats                                              | Taille max |
+| -------- | ---------------------------------------------------- | ---------- |
+| Images   | JPEG, PNG, WebP                                      | 8 Mo       |
+| Audios   | MP3, M4A, AAC, OGG, WAV                              | 200 Mo     |
+| Fichiers | PDF, DOCX, XLSX, PPTX, ODT, ODS, ODP, EPUB, TXT, CSV | 50 Mo      |
+
+En production, les fichiers partent directement du navigateur vers Vercel
+Blob (le store doit être **public**), avec bascule automatique sur S3 si le
+store est plein. Les fichiers des ressources en brouillon ou archivées ne sont
+jamais servis par la route `/api/enseignements/[slug]/telecharger`.
 
 ## Documentation
 
-Voir [`docs/GUIDE-ADMINISTRATEUR.md`](./docs/GUIDE-ADMINISTRATEUR.md) pour
-le guide d'utilisation du back-office destine a un administrateur non
-technique.
+Voir [`docs/GUIDE-ADMINISTRATEUR.md`](./docs/GUIDE-ADMINISTRATEUR.md).
 
-## Contenu a completer avant mise en production
+## Contenu à compléter avant mise en production
 
-- Photographies authentiques du Pasteur Jean-Marc GNALI (le site utilise
-  actuellement des emplacements reserves clairement identifies).
-- Texte biographique de la page `/a-propos`.
-- Mentions legales et politique de confidentialite definitives.
-- Identifiants de stockage cloud (S3) et base de donnees de production.
+- Textes de la page À propos et photo (Admin > Paramètres).
+- Présentation courte et réseaux sociaux (Admin > Paramètres).
+- Mentions légales et politique de confidentialité définitives.

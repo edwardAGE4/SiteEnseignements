@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { ArrowRightIcon } from "@/components/ui/Icons";
 
 export function Eyebrow({
   children,
@@ -12,12 +14,12 @@ export function Eyebrow({
   /** centre le surtitre, avec un trait de chaque cote */
   centered?: boolean;
 }) {
-  const line = <span className={cn("h-px w-10 shrink-0", light ? "bg-gold-300" : "bg-gold-500")} />;
+  const line = <span aria-hidden className={cn("h-px w-8 shrink-0", light ? "bg-gold-300" : "bg-gold-500")} />;
 
   return (
     <span
       className={cn(
-        "flex items-center gap-3 font-accent text-xs font-semibold uppercase tracking-[0.3em]",
+        "flex items-center gap-3 font-accent text-xs font-semibold uppercase tracking-[0.22em]",
         centered && "justify-center text-center",
         light ? "text-gold-300" : "text-gold-600",
         className,
@@ -30,36 +32,73 @@ export function Eyebrow({
   );
 }
 
+/**
+ * Titre de section. Avec `action`, un lien ("Tous les audios") est place a
+ * droite du titre sur ordinateur et sous le titre sur mobile.
+ */
 export function SectionHeading({
   eyebrow,
   title,
+  description,
+  action,
   className,
   light = false,
-  align = "center",
+  align = "left",
+  as: Heading = "h2",
 }: {
   eyebrow?: string;
   title: React.ReactNode;
+  description?: React.ReactNode;
+  action?: { href: string; label: string };
   className?: string;
   light?: boolean;
   align?: "center" | "left";
+  as?: "h1" | "h2";
 }) {
   const centered = align === "center";
 
   return (
-    <div className={cn("space-y-4", centered && "mx-auto text-center", className)}>
-      {eyebrow ? (
-        <Eyebrow light={light} centered={centered}>
-          {eyebrow}
-        </Eyebrow>
+    <div
+      className={cn(
+        "flex flex-col gap-6",
+        centered ? "items-center text-center" : "md:flex-row md:items-end md:justify-between",
+        className,
+      )}
+    >
+      <div className={cn("space-y-4", centered && "mx-auto max-w-2xl")}>
+        {eyebrow ? (
+          <Eyebrow light={light} centered={centered}>
+            {eyebrow}
+          </Eyebrow>
+        ) : null}
+        <Heading
+          className={cn(
+            "font-display text-balance font-medium leading-[1.08] tracking-[-0.01em]",
+            Heading === "h1" ? "text-[clamp(2.25rem,5vw,3.75rem)]" : "text-[clamp(1.85rem,3.6vw,2.75rem)]",
+            light ? "text-ivory-100" : "text-navy-900",
+          )}
+        >
+          {title}
+        </Heading>
+        {description ? (
+          <p className={cn("max-w-2xl text-pretty text-base leading-relaxed md:text-lg", light ? "text-ivory-100/75" : "text-ink-500")}>
+            {description}
+          </p>
+        ) : null}
+      </div>
+
+      {action ? (
+        <Link
+          href={action.href}
+          className={cn(
+            "group inline-flex shrink-0 items-center gap-2 text-sm font-semibold underline-offset-4 hover:underline",
+            light ? "text-gold-300" : "text-navy-900",
+          )}
+        >
+          {action.label}
+          <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
       ) : null}
-      <h2
-        className={cn(
-          "font-display text-balance text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.08]",
-          light ? "text-ivory-100" : "text-navy-900",
-        )}
-      >
-        {title}
-      </h2>
     </div>
   );
 }

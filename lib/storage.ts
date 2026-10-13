@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import type { StorageFolder } from "@/lib/file-validation";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { del, getDownloadUrl, put } from "@vercel/blob";
 import { randomUUID } from "node:crypto";
@@ -6,7 +7,7 @@ import { writeFile, mkdir, unlink, readFile, open } from "node:fs/promises";
 import path from "node:path";
 
 /**
- * Stockage des fichiers (images et PDF).
+ * Stockage des fichiers (images, documents et audios).
  *
  * En production, deux stockages cohabitent :
  * 1. Vercel Blob (principal) : store public connecte au projet Vercel.
@@ -20,7 +21,7 @@ import path from "node:path";
  * Chaque fichier est ensuite lu / supprime selon SON URL (Blob, S3 ou local),
  * les deux stockages pouvant contenir des fichiers.
  */
-export type UploadKind = "images" | "documents";
+export type UploadKind = StorageFolder;
 export type StorageBackend = "blob" | "s3" | "local";
 
 /**
@@ -111,7 +112,7 @@ export function buildBlobPathname(prefix: UploadKind, originalName: string) {
 }
 
 /** Chemins acceptes pour un envoi direct vers le store Blob. */
-export const BLOB_PATHNAME_PATTERN = /^(images|documents)\/[0-9a-f-]{36}\/[A-Za-z0-9._-]+$/;
+export const BLOB_PATHNAME_PATTERN = /^(images|documents|audios)\/[0-9a-f-]{36}\/[A-Za-z0-9._-]+$/;
 
 /**
  * Erreur Vercel Blob qui justifie de basculer sur le stockage de secours
@@ -174,7 +175,7 @@ function keyFromUrl(url: string): string | null {
   // ".../<bucket>/<cle>" ou "https://<bucket>.s3.<region>.amazonaws.com/<cle>"
   const marker = url.includes(`/${bucket}/`) ? `/${bucket}/` : ".amazonaws.com/";
   const key = url.split(marker)[1];
-  return key && /^(images|documents)\//.test(key) ? decodeURIComponent(key.split("?")[0]) : null;
+  return key && /^(images|documents|audios)\//.test(key) ? decodeURIComponent(key.split("?")[0]) : null;
 }
 
 export function buildKey(prefix: UploadKind, originalName: string) {
@@ -212,7 +213,7 @@ function localPath(url: string): string | null {
 /** Relit un fichier stocke localement (null s'il est introuvable). */
 export async function readLocalFile(url: string): Promise<Uint8Array | null> {
   const filePath = localPath(url);
-  return filePath ? readFile(filePath).catch(() => null) : null;
+  return filePath ? readFile(/*turbopackIgnore: true*/ filePath).catch(() => null) : null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -301,7 +302,7 @@ export async function readStoredFileHead(url: string, length = 16): Promise<Buff
 
   const filePath = backend === "local" ? localPath(url) : null;
   if (!filePath) return null;
-  const handle = await open(filePath, "r").catch(() => null);
+  const handle = await open(/*turbopackIgnore: true*/ filePath, "r").catch(() => null);
   if (!handle) return null;
   try {
     const buffer = Buffer.alloc(length);
@@ -348,6 +349,6 @@ export async function deleteFile(url: string): Promise<void> {
     await getS3Client().send(new DeleteObjectCommand({ Bucket: getBucket(), Key: keyFromUrl(url)! }));
   } else if (backend === "local") {
     const filePath = localPath(url);
-    if (filePath) await unlink(filePath).catch(() => {});
+    if (filePath) await unlink(/*turbopackIgnore: true*/ filePath).catch(() => {});
   }
 }

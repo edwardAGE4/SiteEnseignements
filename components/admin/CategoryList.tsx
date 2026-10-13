@@ -19,7 +19,10 @@ type CategoryItem = {
   name: string;
   slug: string;
   description: string | null;
-  teachingCount: number;
+  imageUrl: string | null;
+  isActive: boolean;
+  resourceCount: number;
+  publishedCount: number;
 };
 
 export function CategoryList({ categories }: { categories: CategoryItem[] }) {
@@ -91,7 +94,13 @@ export function CategoryList({ categories }: { categories: CategoryItem[] }) {
                   <div className="space-y-3">
                     <CategoryForm
                       action={updateCategory.bind(null, category.id)}
-                      defaults={{ name: category.name, slug: category.slug, description: category.description ?? "" }}
+                      defaults={{
+                        name: category.name,
+                        slug: category.slug,
+                        description: category.description ?? "",
+                        imageUrl: category.imageUrl ?? "",
+                        isActive: category.isActive,
+                      }}
                       submitLabel="Mettre à jour"
                       onSuccess={(result) => {
                         setNotice(result);
@@ -114,13 +123,19 @@ export function CategoryList({ categories }: { categories: CategoryItem[] }) {
                       </span>
                     )}
                     <div className="min-w-0 flex-1 basis-40">
-                      <p className="truncate font-medium text-navy-900">{category.name}</p>
+                      <p className="truncate font-medium text-navy-900">
+                        {category.name}
+                        {category.isActive ? null : (
+                          <span className="ml-2 rounded-full bg-ink-900/5 px-2 py-0.5 text-xs font-normal text-ink-700">Masquée</span>
+                        )}
+                      </p>
                       {category.description ? (
                         <p className="truncate text-sm text-ink-500">{category.description}</p>
                       ) : null}
                     </div>
-                    <span className="font-data text-xs text-ink-300">
-                      {category.teachingCount} enseignement{category.teachingCount > 1 ? "s" : ""}
+                    <span className="font-data text-xs text-ink-500">
+                      {category.resourceCount} ressource{category.resourceCount > 1 ? "s" : ""} · {category.publishedCount} publiée
+                      {category.publishedCount > 1 ? "s" : ""}
                     </span>
                     <div className="flex items-center gap-4">
                       <button
@@ -134,12 +149,13 @@ export function CategoryList({ categories }: { categories: CategoryItem[] }) {
                         triggerLabel="Supprimer"
                         title="Supprimer cette catégorie ?"
                         description={
-                          category.teachingCount > 0
-                            ? `Cette catégorie contient ${category.teachingCount} enseignement(s). La suppression retirera cette catégorie de ces enseignements.`
+                          category.resourceCount > 0
+                            ? `Cette catégorie contient ${category.resourceCount} ressource(s). Les ressources sont conservées : seule la catégorie leur est retirée.`
                             : "Cette action est irréversible."
                         }
                         confirmLabel="Supprimer"
                         action={() => deleteCategory(category.id)}
+                        onDone={(result) => setNotice(result ?? undefined)}
                       />
                     </div>
                   </div>

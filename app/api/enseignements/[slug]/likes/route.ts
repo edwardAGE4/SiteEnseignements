@@ -5,7 +5,7 @@ import { exceedsRate } from "@/lib/rate-limit";
 
 /**
  * "J'aime" anonymes sur les medias d'un enseignement.
- * Cibles : "youtube", "spotify" ou "pdf:<id du document>".
+ * Cibles : "youtube" (video), "spotify", "audio" ou "pdf:<id du document>".
  * Chaque visiteur est reconnu par un identifiant aleatoire stocke en cookie :
  * un seul "j'aime" par visiteur et par media, un second clic le retire.
  */
@@ -17,14 +17,15 @@ type Context = { params: Promise<{ slug: string }> };
 async function findTeaching(slug: string) {
   return prisma.teaching.findFirst({
     where: { slug, status: "PUBLISHED" },
-    select: { id: true, youtubeUrl: true, spotifyUrl: true, documents: { select: { id: true } } },
+    select: { id: true, videoUrl: true, spotifyUrl: true, audioUrl: true, documents: { select: { id: true } } },
   });
 }
 
 /** Cibles qui existent reellement pour cet enseignement. */
 function validTargets(teaching: NonNullable<Awaited<ReturnType<typeof findTeaching>>>) {
   return new Set([
-    ...(teaching.youtubeUrl ? ["youtube"] : []),
+    ...(teaching.videoUrl ? ["youtube"] : []),
+    ...(teaching.audioUrl ? ["audio"] : []),
     ...(teaching.spotifyUrl ? ["spotify"] : []),
     ...teaching.documents.map((document) => `pdf:${document.id}`),
   ]);

@@ -1,12 +1,12 @@
 import { prisma } from "@/lib/prisma";
 
+/** Categories avec le nombre de ressources rattachees (toutes et publiees), pour l'administration. */
 export async function listCategoriesWithCounts() {
   const categories = await prisma.category.findMany({
     orderBy: { order: "asc" },
     include: {
-      _count: {
-        select: { teachings: { where: { teaching: { status: "PUBLISHED" } } } },
-      },
+      _count: { select: { teachings: true } },
+      teachings: { where: { teaching: { status: "PUBLISHED" } }, select: { teachingId: true } },
     },
   });
 
@@ -15,8 +15,11 @@ export async function listCategoriesWithCounts() {
     slug: category.slug,
     name: category.name,
     description: category.description,
+    imageUrl: category.imageUrl,
+    isActive: category.isActive,
     order: category.order,
-    teachingCount: category._count.teachings,
+    resourceCount: category._count.teachings,
+    publishedCount: category.teachings.length,
   }));
 }
 

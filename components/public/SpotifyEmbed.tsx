@@ -1,38 +1,58 @@
 "use client";
 
 import { useState } from "react";
-import { toSpotifyEmbedUrl } from "@/lib/media";
+import { toSpotifyEmbedUrl, toSpotifyOpenUrl } from "@/lib/media";
+import { ExternalIcon, SpotifyIcon } from "@/components/ui/Icons";
 
-export function SpotifyEmbed({ url }: { url: string }) {
+/**
+ * Lecteur Spotify integre, charge au clic (aucun cookie tiers avant action),
+ * avec un lien direct pour ecouter dans l'application Spotify.
+ */
+export function SpotifyEmbed({ url, title }: { url: string; title: string }) {
   const [loaded, setLoaded] = useState(false);
   const embedUrl = toSpotifyEmbedUrl(url);
+  const openUrl = toSpotifyOpenUrl(url);
 
-  if (!embedUrl) return null;
-
-  if (!loaded) {
+  if (!embedUrl || !openUrl) {
     return (
-      <button
-        type="button"
-        onClick={() => setLoaded(true)}
-        className="flex w-full items-center justify-center gap-3 rounded-2xl border border-ink-900/10 bg-ivory-50 py-6 font-accent text-sm font-medium text-navy-900 transition-colors hover:border-gold-400"
-      >
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1DB954] text-white">
-          <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.4a.62.62 0 0 1-.86.2c-2.36-1.44-5.32-1.77-8.82-.97a.62.62 0 1 1-.28-1.21c3.83-.87 7.12-.5 9.76 1.12.3.18.4.57.2.86Zm1.22-2.71a.78.78 0 0 1-1.07.26c-2.7-1.66-6.82-2.14-10.02-1.17a.78.78 0 1 1-.45-1.49c3.66-1.1 8.2-.57 11.28 1.32.37.23.49.72.26 1.08Zm.11-2.83C14.9 9 8.94 8.8 5.5 9.86a.93.93 0 1 1-.55-1.78c3.95-1.2 10.5-.97 14.14 1.2a.93.93 0 0 1-.97 1.58Z" />
-          </svg>
-        </span>
-        Écouter sur Spotify
-      </button>
+      <p role="alert" className="rounded-2xl border border-orange-300 bg-orange-50 px-5 py-4 text-sm text-orange-900">
+        Le lien Spotify de cet audio n&apos;est plus valide.
+      </p>
     );
   }
 
   return (
-    <iframe
-      src={embedUrl}
-      title="Lecteur audio Spotify"
-      className="h-[152px] w-full rounded-2xl"
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      loading="lazy"
-    />
+    <div className="space-y-3">
+      {loaded ? (
+        <iframe
+          src={embedUrl}
+          title={`Lecteur Spotify : ${title}`}
+          className="h-[152px] w-full rounded-2xl"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setLoaded(true)}
+          className="flex w-full items-center justify-center gap-3 rounded-2xl border border-navy-900/10 bg-white py-6 text-sm font-semibold text-navy-900 transition-colors hover:border-[#1DB954]"
+        >
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954] text-white">
+            <SpotifyIcon className="h-6 w-6" />
+          </span>
+          Afficher le lecteur Spotify
+        </button>
+      )}
+      <a
+        href={openUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 text-sm font-semibold text-navy-900 underline-offset-4 hover:underline"
+      >
+        Écouter sur Spotify
+        <ExternalIcon className="h-4 w-4" />
+        <span className="sr-only">(nouvel onglet)</span>
+      </a>
+    </div>
   );
 }

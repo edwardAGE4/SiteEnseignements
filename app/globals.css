@@ -1,30 +1,34 @@
 @import "tailwindcss";
 
 :root {
-  /* Bleu profond - couleur identitaire principale */
-  --color-navy-950: #0a1826;
-  --color-navy-900: #0b1f33;
-  --color-navy-800: #102a43;
-  --color-navy-700: #1a3a5c;
-  --color-navy-600: #274d76;
+  /* Bleu nuit - couleur identitaire principale */
+  --color-navy-950: #0e1b2c;
+  --color-navy-900: #14263d;
+  --color-navy-800: #1d3350;
+  --color-navy-700: #294866;
+  --color-navy-600: #3a5d80;
+  --color-navy-100: #e6ebf1;
 
-  /* Dore champagne - accent uniquement */
-  --color-gold-600: #a9803f;
-  --color-gold-500: #c6a15b;
-  --color-gold-400: #d4b574;
-  --color-gold-300: #e3cd9c;
+  /* Dore discret - accent uniquement (gold-600/700 : version lisible sur fond clair) */
+  --color-gold-700: #75592c;
+  --color-gold-600: #866a3a;
+  --color-gold-500: #b99a62;
+  --color-gold-400: #cbb287;
+  --color-gold-300: #ddcbaa;
+  --color-gold-100: #f3ece0;
 
-  /* Ivoire / blanc casse */
-  --color-ivory-50: #fcfbf8;
-  --color-ivory-100: #faf9f6;
-  --color-ivory-200: #f7f5ef;
-  --color-ivory-300: #efebe0;
+  /* Ivoire / blanc */
+  --color-white: #ffffff;
+  --color-ivory-50: #ffffff;
+  --color-ivory-100: #ffffff;
+  --color-ivory-200: #f1ede4;
+  --color-ivory-300: #e6e0d3;
 
   /* Texte */
-  --color-ink-900: #20252b;
-  --color-ink-700: #3a4048;
-  --color-ink-500: #656b73;
-  --color-ink-300: #9aa0a8;
+  --color-ink-900: #242a32;
+  --color-ink-700: #3c434d;
+  --color-ink-500: #69717d;
+  --color-ink-300: #737a85;
 
   --background: var(--color-ivory-100);
   --foreground: var(--color-ink-900);
@@ -39,11 +43,14 @@
   --color-navy-800: var(--color-navy-800);
   --color-navy-700: var(--color-navy-700);
   --color-navy-600: var(--color-navy-600);
+  --color-navy-100: var(--color-navy-100);
 
+  --color-gold-700: var(--color-gold-700);
   --color-gold-600: var(--color-gold-600);
   --color-gold-500: var(--color-gold-500);
   --color-gold-400: var(--color-gold-400);
   --color-gold-300: var(--color-gold-300);
+  --color-gold-100: var(--color-gold-100);
 
   --color-ivory-50: var(--color-ivory-50);
   --color-ivory-100: var(--color-ivory-100);
@@ -55,18 +62,18 @@
   --color-ink-500: var(--color-ink-500);
   --color-ink-300: var(--color-ink-300);
 
-  --font-sans: var(--font-nunito);
-  --font-display: var(--font-poppins);
-  --font-accent: var(--font-nunito);
-  --font-data: var(--font-nunito);
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-fraunces);
+  --font-accent: var(--font-manrope);
+  --font-data: var(--font-manrope);
 
-  --animate-fade-up: fade-up 0.7s ease forwards;
-  --animate-fade-in: fade-in 0.9s ease forwards;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.9s ease both;
 
   @keyframes fade-up {
     from {
       opacity: 0;
-      transform: translateY(1.25rem);
+      transform: translateY(1rem);
     }
     to {
       opacity: 1;
@@ -89,19 +96,71 @@
 
 html {
   scroll-behavior: smooth;
+  /* l'en-tete collant ne masque pas les ancres (#ressources...) */
+  scroll-padding-top: 5.5rem;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
 h1,
 h2,
 h3,
 .font-display {
-  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-optical-sizing: auto;
+}
+
+/* Focus visible et coherent sur tout le site (navigation au clavier) */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-gold-500);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--color-gold-300);
+  color: var(--color-navy-950);
+}
+
+/* Lien d'evitement (accessibilite) */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  border-radius: 9999px;
+  background: var(--color-navy-900);
+  color: var(--color-ivory-100);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Apparition discrete au defilement (navigateurs compatibles) : leger glissement
+   seulement, jamais d'opacite nulle - le contenu reste toujours visible. */
+@keyframes rise {
+  from {
+    transform: translateY(14px);
+  }
+  to {
+    transform: none;
+  }
+}
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -113,10 +172,17 @@ h3,
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .reveal {
+    animation: none !important;
+  }
 }
 
 .text-balance {
   text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
 }
 
 .prose-editorial {
@@ -125,4 +191,49 @@ h3,
 
 .prose-editorial p + p {
   margin-top: 1.5em;
+}
+
+/* Curseurs (lecteur audio) */
+input[type="range"].range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1.5rem;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"].range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--range-fill, var(--color-navy-900)) var(--range-progress, 0%),
+    var(--range-track, rgba(36, 42, 50, 0.15)) var(--range-progress, 0%)
+  );
+}
+input[type="range"].range::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--range-track, rgba(36, 42, 50, 0.15));
+}
+input[type="range"].range::-moz-range-progress {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--range-fill, var(--color-navy-900));
+}
+input[type="range"].range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  margin-top: -5px;
+  height: 14px;
+  width: 14px;
+  border-radius: 9999px;
+  background: var(--range-fill, var(--color-navy-900));
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(20, 38, 61, 0.2);
+}
+input[type="range"].range::-moz-range-thumb {
+  height: 12px;
+  width: 12px;
+  border-radius: 9999px;
+  background: var(--range-fill, var(--color-navy-900));
+  border: 2px solid #fff;
 }

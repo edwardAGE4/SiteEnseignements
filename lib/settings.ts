@@ -1,13 +1,28 @@
 import { prisma } from "@/lib/prisma";
+import { SOCIAL_NETWORKS, type SocialKey } from "@/lib/social";
+
+export { SOCIAL_NETWORKS, type SocialKey };
+
+export { SITE_NAME } from "@/lib/site";
 
 /** Cles des reglages modifiables depuis l'espace admin (table site_settings). */
 export const SETTING_KEYS = {
+  // cle historique conservee pour ne pas perdre la photo deja enregistree
   pastorPortraitUrl: "pastorPortraitUrl",
   aboutTitle: "aboutTitle",
   aboutLead: "aboutLead",
   aboutBody: "aboutBody",
+  aboutApproach: "aboutApproach",
   aboutQuote: "aboutQuote",
   aboutQuoteSource: "aboutQuoteSource",
+  siteIntro: "siteIntro",
+  socialFacebook: "socialFacebook",
+  socialInstagram: "socialInstagram",
+  socialYoutube: "socialYoutube",
+  socialSpotify: "socialSpotify",
+  socialTiktok: "socialTiktok",
+  socialX: "socialX",
+  socialLinkedin: "socialLinkedin",
 } as const;
 
 export type SettingKey = (typeof SETTING_KEYS)[keyof typeof SETTING_KEYS];
@@ -25,57 +40,97 @@ export async function setSetting(key: SettingKey, value: string | null): Promise
   }
 }
 
-export function getPastorPortraitUrl() {
+async function getSettings<K extends SettingKey>(keys: readonly K[]): Promise<Record<K, string>> {
+  const rows = await prisma.siteSetting.findMany({ where: { key: { in: [...keys] } } });
+  const values = Object.fromEntries(rows.map((row) => [row.key, row.value]));
+  return Object.fromEntries(keys.map((key) => [key, values[key] ?? ""])) as Record<K, string>;
+}
+
+/** Photographie de Jean-Marc GNALI (Admin > Parametres). */
+export function getPortraitUrl() {
   return getSetting(SETTING_KEYS.pastorPortraitUrl);
 }
 
-/** Textes affiches tant que la biographie n'a pas ete renseignee dans l'admin. */
-export const DEFAULT_BIOGRAPHY = {
-  title: "Une mission.\nUne transmission.",
-  lead: "Un contenu à compléter par le propriétaire du site.",
-  body:
-    "Cette page est prévue pour accueillir le parcours, la vision et la vocation d'enseignement du Pasteur Jean-Marc GNALI, rédigé à la manière d'un récit éditorial plutôt que d'une fiche administrative.\n\n" +
-    "Conformément aux exigences du projet, aucune information biographique n'a été inventée : le texte définitif doit être fourni par le Pasteur Jean-Marc GNALI ou par le propriétaire de la plateforme, puis intégré ici.",
-  quote: "La transmission commence toujours par une compréhension nouvelle.",
-  quoteSource: "",
+/* ------------------------------------------------------------------ */
+/* Biographie (page A propos)                                          */
+/* ------------------------------------------------------------------ */
+
+export type Biography = {
+  title: string;
+  lead: string;
+  body: string;
+  approach: string;
+  quote: string;
+  quoteSource: string;
 };
 
-export type Biography = typeof DEFAULT_BIOGRAPHY;
+export const EMPTY_BIOGRAPHY: Biography = { title: "", lead: "", body: "", approach: "", quote: "", quoteSource: "" };
 
-/** Biographie enregistree, sans valeurs par defaut (champs vides si non renseignes). */
-export async function getSavedBiography(): Promise<Biography | null> {
-  const rows = await prisma.siteSetting.findMany({
-    where: {
-      key: {
-        in: [
-          SETTING_KEYS.aboutTitle,
-          SETTING_KEYS.aboutLead,
-          SETTING_KEYS.aboutBody,
-          SETTING_KEYS.aboutQuote,
-          SETTING_KEYS.aboutQuoteSource,
-        ],
-      },
-    },
-  });
-  if (rows.length === 0) return null;
+const BIOGRAPHY_KEYS = [
+  SETTING_KEYS.aboutTitle,
+  SETTING_KEYS.aboutLead,
+  SETTING_KEYS.aboutBody,
+  SETTING_KEYS.aboutApproach,
+  SETTING_KEYS.aboutQuote,
+  SETTING_KEYS.aboutQuoteSource,
+] as const;
 
-  const values = Object.fromEntries(rows.map((row) => [row.key, row.value]));
+/**
+ * Biographie enregistree. Les champs non renseignes sont vides et les sections
+ * correspondantes sont masquees sur le site : aucun texte n'est invente.
+ */
+export async function getBiography(): Promise<Biography> {
+  const values = await getSettings(BIOGRAPHY_KEYS);
   return {
-    title: values[SETTING_KEYS.aboutTitle] ?? "",
-    lead: values[SETTING_KEYS.aboutLead] ?? "",
-    body: values[SETTING_KEYS.aboutBody] ?? "",
-    quote: values[SETTING_KEYS.aboutQuote] ?? "",
-    quoteSource: values[SETTING_KEYS.aboutQuoteSource] ?? "",
+    title: values.aboutTitle,
+    lead: values.aboutLead,
+    body: values.aboutBody,
+    approach: values.aboutApproach,
+    quote: values.aboutQuote,
+    quoteSource: values.aboutQuoteSource,
   };
 }
 
-/**
- * Biographie a afficher sur le site. Tant que rien n'a ete enregistre, on montre
- * les textes par defaut ; ensuite, un champ laisse vide est simplement masque
- * (sauf le titre, indispensable a la mise en page).
- */
-export async function getBiography(): Promise<Biography> {
-  const saved = await getSavedBiography();
-  if (!saved) return DEFAULT_BIOGRAPHY;
-  return { ...saved, title: saved.title || DEFAULT_BIOGRAPHY.title };
+/* ------------------------------------------------------------------ */
+/* Presentation courte et reseaux sociaux (pied de page)              */
+/* ------------------------------------------------------------------ */
+
+
+export type SiteIdentity = {
+  intro: string;
+  socials: { key: SocialKey; label: string; url: string }[];
+  /** valeurs brutes, pour le formulaire d'administration */
+  socialValues: Record<SocialKey, string>;
+};
+
+export async function getSiteIdentity(): Promise<SiteIdentity> {
+  const keys = [SETTING_KEYS.siteIntro, ...SOCIAL_NETWORKS.map((network) => network.key)] as const;
+  const values = await getSettings(keys);
+  const socialValues = Object.fromEntries(
+    SOCIAL_NETWORKS.map((network) => [network.key, values[network.key]]),
+  ) as Record<SocialKey, string>;
+
+  return {
+    intro: values.siteIntro,
+    socials: SOCIAL_NETWORKS.filter((network) => values[network.key]).map((network) => ({
+      key: network.key,
+      label: network.label,
+      url: values[network.key],
+    })),
+    socialValues,
+  };
+}
+
+/** Lecture tolerante (le site reste affichable si la base est momentanement indisponible). */
+export async function getSiteIdentitySafe(): Promise<SiteIdentity> {
+  try {
+    return await getSiteIdentity();
+  } catch (error) {
+    console.error("[settings] Lecture de l'identite du site impossible :", error);
+    return {
+      intro: "",
+      socials: [],
+      socialValues: Object.fromEntries(SOCIAL_NETWORKS.map((network) => [network.key, ""])) as Record<SocialKey, string>,
+    };
+  }
 }

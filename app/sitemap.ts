@@ -1,28 +1,39 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { getSiteUrl } from "@/lib/site-url";
+import { resourcePath, SECTION_LIST } from "@/lib/sections";
+
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
 
-  const [teachings, categories] = await Promise.all([
+  const [resources, categories] = await Promise.all([
     prisma.teaching.findMany({
-      where: { status: "PUBLISHED" },
+      where: { status: "PUBLISHED", OR: [{ publishedAt: null }, { publishedAt: { lte: new Date() } }] },
+      select: { slug: true, type: true, updatedAt: true },
+    }),
+    prisma.category.findMany({
+      where: { isActive: true, teachings: { some: { teaching: { status: "PUBLISHED" } } } },
       select: { slug: true, updatedAt: true },
     }),
-    prisma.category.findMany({ select: { slug: true, updatedAt: true } }),
   ]);
 
   const staticEntries: MetadataRoute.Sitemap = [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
-    { url: `${siteUrl}/enseignements`, changeFrequency: "daily", priority: 0.9 },
-    { url: `${siteUrl}/categories`, changeFrequency: "weekly", priority: 0.6 },
-    { url: `${siteUrl}/a-propos`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${siteUrl}/a-propos`, changeFrequency: "monthly", priority: 0.6 },
+    ...SECTION_LIST.map((section) => ({
+      url: `${siteUrl}${section.path}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.9,
+    })),
+    { url: `${siteUrl}/categories`, changeFrequency: "weekly", priority: 0.5 },
   ];
 
-  const teachingEntries: MetadataRoute.Sitemap = teachings.map((teaching) => ({
-    url: `${siteUrl}/enseignements/${teaching.slug}`,
-    lastModified: teaching.updatedAt,
+  // une seule URL (canonique) par ressource : celle de sa rubrique principale
+  const resourceEntries: MetadataRoute.Sitemap = resources.map((resource) => ({
+    url: `${siteUrl}${resourcePath(resource)}`,
+    lastModified: resource.updatedAt,
     changeFrequency: "monthly",
     priority: 0.7,
   }));
@@ -34,5 +45,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  return [...staticEntries, ...teachingEntries, ...categoryEntries];
+  return [...staticEntries, ...resourceEntries, ...categoryEntries];
 }

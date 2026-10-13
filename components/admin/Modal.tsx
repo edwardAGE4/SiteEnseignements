@@ -19,7 +19,7 @@ export const Modal = forwardRef<HTMLDialogElement, { title: string; description:
         <div className="p-6">
           <h2 className="font-display text-lg font-semibold text-navy-900">{title}</h2>
           <p className="mt-2 text-sm text-ink-500">{description}</p>
-          <div className="mt-6 flex justify-end gap-3">{children}</div>
+          <div className="mt-6 flex flex-wrap justify-end gap-3">{children}</div>
         </div>
       </dialog>
     );

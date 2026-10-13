@@ -1,112 +1,162 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Container } from "@/components/ui/Container";
+import { SearchIcon } from "@/components/ui/Icons";
+import { NAV_LINKS, SITE_NAME } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-const NAV_LINKS = [
-  { href: "/enseignements", label: "Enseignements" },
-  { href: "/categories", label: "Catégories" },
-  { href: "/a-propos", label: "À propos" },
-];
+function isActive(pathname: string, href: string) {
+  return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export function Header() {
   const pathname = usePathname();
-  const isHome = pathname === "/";
-  const [prevIsHome, setPrevIsHome] = useState(isHome);
-  const [scrolled, setScrolled] = useState(!isHome);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
-  if (isHome !== prevIsHome) {
-    setPrevIsHome(isHome);
-    setScrolled(!isHome);
+  // le menu mobile se referme a chaque changement de page
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setMenuOpen(false);
   }
 
   useEffect(() => {
-    if (!isHome) return;
-    const onScroll = () => setScrolled(window.scrollY > 64);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [isHome]);
+  }, []);
 
-  const transparent = isHome && !scrolled && !menuOpen;
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    const closeOnDesktop = () => {
+      if (window.matchMedia("(min-width: 1024px)").matches) setMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    window.addEventListener("resize", closeOnDesktop);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("resize", closeOnDesktop);
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  const searchActive = isActive(pathname, "/recherche");
 
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        transparent
-          ? "bg-transparent py-6"
-          : "bg-navy-900/95 py-4 shadow-[0_1px_0_rgba(212,181,116,0.15)] backdrop-blur",
+        "sticky top-0 z-50 border-b bg-ivory-100/95 backdrop-blur-sm transition-[border-color,box-shadow] duration-300 supports-[backdrop-filter]:bg-ivory-100/85",
+        scrolled || menuOpen ? "border-navy-900/10 shadow-[0_8px_24px_-20px_rgba(20,38,61,0.5)]" : "border-transparent",
       )}
     >
-      <Container className="flex items-center justify-between">
-        <Link href="/" className="font-display text-sm font-semibold uppercase tracking-[0.25em] text-ivory-100">
-          Pasteur Jean-Marc GNALI
+      <Container className="flex h-[4.5rem] items-center justify-between gap-6">
+        <Link
+          href="/"
+          className="font-display text-[1.35rem] font-medium tracking-[-0.01em] text-navy-900 md:text-2xl"
+          aria-label={`${SITE_NAME} — Accueil`}
+        >
+          {SITE_NAME}
         </Link>
 
-        <nav className="hidden items-center gap-9 md:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="font-accent text-sm font-medium tracking-wide text-ivory-100/90 transition-colors hover:text-gold-300"
-            >
-              {link.label}
-            </Link>
-          ))}
-          <Link
-            href="/enseignements"
-            className="rounded-full border border-gold-400/60 px-5 py-2 font-accent text-sm font-medium text-gold-300 transition-colors hover:bg-gold-500 hover:text-navy-950"
-          >
-            Rechercher
-          </Link>
-        </nav>
-
-        <button
-          type="button"
-          aria-label="Ouvrir le menu"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((open) => !open)}
-          className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
-        >
-          <span
-            className={cn(
-              "block h-px w-6 bg-ivory-100 transition-transform",
-              menuOpen && "translate-y-[7px] rotate-45",
-            )}
-          />
-          <span
-            className={cn("block h-px w-6 bg-ivory-100 transition-opacity", menuOpen && "opacity-0")}
-          />
-          <span
-            className={cn(
-              "block h-px w-6 bg-ivory-100 transition-transform",
-              menuOpen && "-translate-y-[7px] -rotate-45",
-            )}
-          />
-        </button>
-      </Container>
-
-      {menuOpen ? (
-        <Container className="md:hidden">
-          <nav className="mt-6 flex flex-col gap-1 border-t border-ivory-100/10 pt-6 pb-4">
-            {NAV_LINKS.map((link) => (
+        <nav aria-label="Navigation principale" className="hidden items-center gap-1 lg:flex">
+          {NAV_LINKS.map((link) => {
+            const active = isActive(pathname, link.href);
+            return (
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="rounded-lg px-2 py-3 font-accent text-base text-ivory-100 hover:bg-ivory-100/5"
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "relative rounded-full px-3.5 py-2 text-[0.92rem] font-medium transition-colors",
+                  active ? "text-navy-900" : "text-ink-700 hover:text-navy-900",
+                  "after:absolute after:inset-x-3.5 after:-bottom-0.5 after:h-px after:origin-left after:bg-gold-500 after:transition-transform after:duration-300",
+                  active ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100",
+                )}
               >
                 {link.label}
               </Link>
-            ))}
+            );
+          })}
+          <Link
+            href="/recherche"
+            aria-label="Rechercher une ressource"
+            aria-current={searchActive ? "page" : undefined}
+            className={cn(
+              "ml-2 flex h-10 w-10 items-center justify-center rounded-full border transition-colors",
+              searchActive
+                ? "border-navy-900 bg-navy-900 text-ivory-100"
+                : "border-navy-900/15 text-navy-900 hover:border-navy-900",
+            )}
+          >
+            <SearchIcon className="h-[18px] w-[18px]" />
+          </Link>
+        </nav>
+
+        <div className="flex items-center gap-2 lg:hidden">
+          <Link
+            href="/recherche"
+            aria-label="Rechercher une ressource"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-navy-900 hover:bg-navy-900/5"
+          >
+            <SearchIcon className="h-5 w-5" />
+          </Link>
+          <button
+            ref={toggleRef}
+            type="button"
+            aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={menuOpen}
+            aria-controls="menu-mobile"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full hover:bg-navy-900/5"
+          >
+            <span className={cn("block h-[1.5px] w-6 bg-navy-900 transition-transform", menuOpen && "translate-y-[7.5px] rotate-45")} />
+            <span className={cn("block h-[1.5px] w-6 bg-navy-900 transition-opacity", menuOpen && "opacity-0")} />
+            <span className={cn("block h-[1.5px] w-6 bg-navy-900 transition-transform", menuOpen && "-translate-y-[7.5px] -rotate-45")} />
+          </button>
+        </div>
+      </Container>
+
+      <div
+        id="menu-mobile"
+        hidden={!menuOpen}
+        className="h-[calc(100dvh-4.5rem)] overflow-y-auto border-t border-navy-900/10 bg-ivory-100 lg:hidden"
+      >
+        <Container>
+          <nav aria-label="Navigation mobile" className="flex flex-col py-6">
+            {NAV_LINKS.map((link) => {
+              const active = isActive(pathname, link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  onClick={() => setMenuOpen(false)}
+                  className={cn(
+                    "flex items-center justify-between border-b border-navy-900/10 py-4 font-display text-2xl transition-colors",
+                    active ? "text-navy-900" : "text-ink-700 hover:text-navy-900",
+                  )}
+                >
+                  {link.label}
+                  {active ? <span aria-hidden className="h-2 w-2 rounded-full bg-gold-500" /> : null}
+                </Link>
+              );
+            })}
           </nav>
         </Container>
-      ) : null}
+      </div>
     </header>
   );
 }

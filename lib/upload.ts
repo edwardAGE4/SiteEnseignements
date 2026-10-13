@@ -3,7 +3,7 @@
  * (fetch ne permet pas de connaitre l'avancement d'un envoi, d'ou XMLHttpRequest).
  */
 
-type UploadKind = "image" | "pdf";
+import type { UploadKindName as UploadKind } from "@/lib/file-validation";
 type SignResponse =
   | { mode: "server"; endpoint: string }
   | { mode: "direct"; uploadUrl: string; publicUrl: string; contentType: string }
@@ -51,7 +51,7 @@ function isBlobCapacityError(message: string) {
 }
 
 /**
- * Envoie une image ou un PDF et renvoie son URL publique.
+ * Envoie un fichier (image, PDF, document, audio) et renvoie son URL publique.
  * - Vercel Blob (principal, production) : envoi direct via le SDK Vercel Blob ;
  *   si le store refuse (plein, suspendu...), nouvel essai sur le stockage S3 ;
  * - stockage S3 (secours, Supabase) : envoi direct via une URL pre-signee ;
@@ -67,13 +67,14 @@ export async function uploadMedia(
   const sign = await postJson<SignResponse>("/api/upload/sign", {
     kind,
     fileName: file.name,
-    contentType: file.type || (kind === "pdf" ? "application/pdf" : ""),
+
     size: file.size,
     fallback,
   });
 
   if (sign.mode === "server") {
     const formData = new FormData();
+    formData.append("kind", kind);
     formData.append("file", file);
     const xhr = await sendWithProgress("POST", sign.endpoint, formData, onProgress);
     let data: { url?: string; error?: string } | null = null;

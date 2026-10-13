@@ -1,6 +1,18 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+/** Pages a afficher : 1 … 4 5 6 … 12 */
+function visiblePages(page: number, pageCount: number): (number | "…")[] {
+  const pages = new Set([1, pageCount, page - 1, page, page + 1].filter((p) => p >= 1 && p <= pageCount));
+  const sorted = [...pages].sort((a, b) => a - b);
+  const result: (number | "…")[] = [];
+  sorted.forEach((p, index) => {
+    if (index > 0 && p - sorted[index - 1] > 1) result.push("…");
+    result.push(p);
+  });
+  return result;
+}
+
 export function Pagination({
   page,
   pageCount,
@@ -24,40 +36,36 @@ export function Pagination({
     return query ? `${basePath}?${query}` : basePath;
   }
 
-  const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+  const linkClass = "flex h-11 min-w-11 items-center justify-center rounded-full px-4 text-sm transition-colors";
 
   return (
-    <nav className="flex items-center justify-center gap-2 pt-4" aria-label="Pagination">
+    <nav className="flex flex-wrap items-center justify-center gap-2 pt-4" aria-label="Pagination">
       {page > 1 ? (
-        <Link
-          href={hrefFor(page - 1)}
-          className="rounded-full border border-ink-900/15 px-4 py-2 text-sm text-ink-700 hover:border-navy-900"
-        >
+        <Link href={hrefFor(page - 1)} rel="prev" className={cn(linkClass, "border border-navy-900/15 text-ink-700 hover:border-navy-900")}>
           Précédent
         </Link>
       ) : null}
 
-      {pages.map((p) => (
-        <Link
-          key={p}
-          href={hrefFor(p)}
-          aria-current={p === page ? "page" : undefined}
-          className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-full font-data text-sm",
-            p === page
-              ? "bg-navy-900 text-ivory-100"
-              : "text-ink-700 hover:bg-ink-900/5",
-          )}
-        >
-          {p}
-        </Link>
-      ))}
+      {visiblePages(page, pageCount).map((p, index) =>
+        p === "…" ? (
+          <span key={`ellipsis-${index}`} aria-hidden className="px-1 text-ink-500">
+            …
+          </span>
+        ) : (
+          <Link
+            key={p}
+            href={hrefFor(p)}
+            aria-current={p === page ? "page" : undefined}
+            aria-label={`Page ${p}`}
+            className={cn(linkClass, "px-0", p === page ? "bg-navy-900 text-ivory-100" : "text-ink-700 hover:bg-navy-900/5")}
+          >
+            {p}
+          </Link>
+        ),
+      )}
 
       {page < pageCount ? (
-        <Link
-          href={hrefFor(page + 1)}
-          className="rounded-full border border-ink-900/15 px-4 py-2 text-sm text-ink-700 hover:border-navy-900"
-        >
+        <Link href={hrefFor(page + 1)} rel="next" className={cn(linkClass, "border border-navy-900/15 text-ink-700 hover:border-navy-900")}>
           Suivant
         </Link>
       ) : null}

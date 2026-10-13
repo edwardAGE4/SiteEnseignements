@@ -1,4 +1,4 @@
-// Schema de base de donnees - Plateforme des enseignements du Pasteur Jean-Marc GNALI
+// Schema de base de donnees - Espace media de Jean-Marc GNALI
 // https://pris.ly/d/prisma-schema
 
 generator client {
@@ -18,6 +18,21 @@ enum Role {
 enum Status {
   DRAFT
   PUBLISHED
+  ARCHIVED
+}
+
+// Rubrique principale d'une ressource (Audios, Videos, Livres, Fichiers pratiques)
+enum ResourceType {
+  AUDIO
+  VIDEO
+  BOOK
+  FILE
+}
+
+// Ce que le visiteur peut faire des fichiers joints a une ressource
+enum DownloadPolicy {
+  DOWNLOAD // consultation et telechargement
+  VIEW_ONLY // consultation en ligne uniquement (pas de bouton de telechargement)
 }
 
 model User {
@@ -39,6 +54,8 @@ model Category {
   name        String             @unique
   slug        String             @unique
   description String?
+  imageUrl    String?
+  isActive    Boolean            @default(true)
   order       Int                @default(0)
   teachings   TeachingCategory[]
   createdAt   DateTime           @default(now())
@@ -48,31 +65,51 @@ model Category {
   @@map("categories")
 }
 
+// Ressource du site (audio, video, livre ou fichier pratique).
+// Le modele garde son nom historique "Teaching" (table "teachings") pour
+// preserver les donnees et les URL existantes.
 model Teaching {
-  id            String             @id @default(cuid())
-  title         String
-  slug          String             @unique
-  description   String
-  youtubeUrl    String?
-  spotifyUrl    String?
-  coverImageUrl String?
-  tags          String[]           @default([])
-  status        Status             @default(DRAFT)
-  publishedAt   DateTime?
-  viewCount     Int                @default(0)
-  downloadCount Int                @default(0)
+  id              String         @id @default(cuid())
+  type            ResourceType   @default(VIDEO)
+  title           String
+  slug            String         @unique
+  excerpt         String?
+  description     String
+  // colonne historique "youtubeUrl" : accepte desormais YouTube et Vimeo
+  videoUrl        String?        @map("youtubeUrl")
+  spotifyUrl      String?
+  audioUrl        String?
+  durationSeconds Int?
+  series          String?
+  subtitle        String?
+  author          String?
+  isbn            String?
+  bookFormats     String[]       @default([])
+  readUrl         String?
+  purchaseUrl     String?
+  downloadPolicy  DownloadPolicy @default(DOWNLOAD)
+  coverImageUrl   String?
+  tags            String[]       @default([])
+  status          Status         @default(DRAFT)
+  featured        Boolean        @default(false)
+  publishedAt     DateTime?
+  seoTitle        String?
+  seoDescription  String?
+  viewCount       Int            @default(0)
+  downloadCount   Int            @default(0)
 
-  createdBy     User               @relation("CreatedBy", fields: [createdById], references: [id])
-  createdById   String
+  createdBy   User   @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById String
 
-  categories    TeachingCategory[]
-  documents     TeachingDocument[]
-  likes         MediaLike[]
+  categories TeachingCategory[]
+  documents  TeachingDocument[]
+  likes      MediaLike[]
 
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status, publishedAt])
+  @@index([type, status, publishedAt])
   @@index([createdById])
   @@map("teachings")
 }
@@ -89,13 +126,15 @@ model TeachingCategory {
   @@map("teaching_categories")
 }
 
-// Documents PDF d'un enseignement (plusieurs par enseignement)
+// Fichiers joints a une ressource (PDF, DOCX, XLSX, EPUB...)
 model TeachingDocument {
   id         String   @id @default(cuid())
   teaching   Teaching @relation(fields: [teachingId], references: [id], onDelete: Cascade)
   teachingId String
   url        String
   fileName   String
+  mimeType   String?
+  sizeBytes  Int?
   order      Int      @default(0)
   createdAt  DateTime @default(now())
 
@@ -103,8 +142,8 @@ model TeachingDocument {
   @@map("teaching_documents")
 }
 
-// "J'aime" anonymes sur un media d'un enseignement.
-// target : "youtube", "spotify" ou "pdf:<id du document>"
+// "J'aime" anonymes sur un media d'une ressource.
+// target : "youtube" (video), "spotify", "audio" ou "pdf:<id du document>"
 // visitorId : identifiant aleatoire stocke dans un cookie du visiteur
 model MediaLike {
   id         String   @id @default(cuid())
@@ -119,7 +158,7 @@ model MediaLike {
   @@map("media_likes")
 }
 
-// Reglages du site modifiables depuis l'admin (ex. photo du pasteur)
+// Reglages du site modifiables depuis l'admin (photo, biographie, reseaux sociaux...)
 model SiteSetting {
   key       String   @id
   value     String

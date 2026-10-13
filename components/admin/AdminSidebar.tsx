@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 const LINKS: { href: string; label: string; exact?: boolean }[] = [
   { href: "/admin", label: "Tableau de bord", exact: true },
-  { href: "/admin/enseignements", label: "Enseignements" },
+  { href: "/admin/enseignements", label: "Ressources" },
   { href: "/admin/categories", label: "Catégories" },
 ];
 

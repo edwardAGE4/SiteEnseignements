@@ -2,7 +2,7 @@
  * Donnees de demonstration.
  * Ces contenus sont fictifs et servent uniquement a illustrer le fonctionnement
  * de la plateforme. Ils ne representent en aucun cas les propos reels du
- * Pasteur Jean-Marc GNALI et doivent etre remplaces par du contenu authentique
+ * Jean-Marc GNALI et doivent etre remplaces par du contenu authentique
  * avant toute mise en production.
  */
 import "dotenv/config";
@@ -46,9 +46,10 @@ const DEMO_TEACHINGS = [
     slug: "demo-la-foi-qui-transforme",
     description:
       "[Contenu de demonstration] Un enseignement sur la maniere dont une comprehension nouvelle de la foi transforme le regard et les decisions du quotidien.",
-    youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     spotifyUrl: null,
     tags: ["foi", "transformation"],
+    type: "VIDEO" as const,
     status: "PUBLISHED" as const,
     categorySlug: "foi",
   },
@@ -57,9 +58,10 @@ const DEMO_TEACHINGS = [
     slug: "demo-batir-un-foyer-sur-le-roc",
     description:
       "[Contenu de demonstration] Principes pratiques pour fonder une famille stable et unie autour de valeurs solides.",
-    youtubeUrl: null,
+    videoUrl: null,
     spotifyUrl: "https://open.spotify.com/episode/0000000000000000000000",
     tags: ["famille", "fondations"],
+    type: "AUDIO" as const,
     status: "PUBLISHED" as const,
     categorySlug: "famille",
   },
@@ -68,9 +70,10 @@ const DEMO_TEACHINGS = [
     slug: "demo-le-leadership-serviteur",
     description:
       "[Contenu de demonstration] Comprendre l'autorite comme un service et non comme un privilege.",
-    youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     spotifyUrl: null,
     tags: ["leadership", "service"],
+    type: "VIDEO" as const,
     status: "PUBLISHED" as const,
     categorySlug: "leadership",
   },
@@ -79,9 +82,10 @@ const DEMO_TEACHINGS = [
     slug: "demo-une-priere-qui-perce-les-cieux",
     description:
       "[Contenu de demonstration] Les cles d'une vie de priere constante, sincere et efficace.",
-    youtubeUrl: null,
+    videoUrl: null,
     spotifyUrl: "https://open.spotify.com/episode/0000000000000000000001",
     tags: ["priere", "intimite"],
+    type: "AUDIO" as const,
     status: "PUBLISHED" as const,
     categorySlug: "priere",
   },
@@ -90,19 +94,30 @@ const DEMO_TEACHINGS = [
     slug: "demo-comprendre-avant-de-transmettre",
     description:
       "[Contenu de demonstration] Pourquoi la transmission commence toujours par une comprehension nouvelle du texte.",
-    youtubeUrl: null,
+    videoUrl: null,
     spotifyUrl: null,
     tags: ["foi", "enseignement"],
+    type: "VIDEO" as const,
     status: "DRAFT" as const,
     categorySlug: "foi",
   },
 ];
 
 async function main() {
+  // donnees fictives : jamais sur une base de production
+  if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+    throw new Error("Le seed de demonstration ne doit pas etre execute en production.");
+  }
+  // aucun mot de passe code en dur : il est fourni au lancement
+  const demoPassword = process.env.SEED_DEMO_PASSWORD;
+  if (!demoPassword || demoPassword.length < 12) {
+    throw new Error("Definissez SEED_DEMO_PASSWORD (12 caracteres minimum) pour creer les comptes de demonstration.");
+  }
+
   console.log("Seed: creation des utilisateurs de demonstration...");
 
-  const adminPasswordHash = await bcrypt.hash("ChangeMoi123!", 12);
-  const editorPasswordHash = await bcrypt.hash("ChangeMoi123!", 12);
+  const adminPasswordHash = await bcrypt.hash(demoPassword, 12);
+  const editorPasswordHash = await bcrypt.hash(demoPassword, 12);
 
   const admin = await prisma.user.upsert({
     where: { email: "admin@demo.local" },
@@ -163,8 +178,7 @@ async function main() {
 
   console.log("Seed termine.");
   console.log("Comptes de demonstration :");
-  console.log("  admin@demo.local / ChangeMoi123! (ADMIN)");
-  console.log("  editeur@demo.local / ChangeMoi123! (EDITOR)");
+  console.log("  admin@demo.local (ADMIN) et editeur@demo.local (EDITOR), mot de passe : SEED_DEMO_PASSWORD");
 }
 
 main()

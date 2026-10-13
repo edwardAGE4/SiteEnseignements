@@ -57,3 +57,27 @@ export function matchesSearch(query: string, fields: (string | null | undefined)
 export function isInteractiveClick(event: { target: EventTarget | null }): boolean {
   return event.target instanceof Element && Boolean(event.target.closest("a, button, input, select, textarea, label, dialog"));
 }
+
+/** Texte brut d'un contenu saisi avec la mise en forme simple de RichText (##, **, -). */
+export function stripRichText(text: string): string {
+  return text
+    .replace(/\r\n/g, "\n")
+    .replace(/^##\s+/gm, "")
+    .replace(/^[-•]\s+/gm, "")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Resume court d'une ressource : description courte, sinon debut de la description. */
+export function resourceSummary(resource: { excerpt?: string | null; description: string }, maxLength = 160): string {
+  return truncate(resource.excerpt?.trim() || stripRichText(resource.description), maxLength);
+}
+
+/** Date au format AAAA-MM-JJ (champ <input type="date">). */
+export function toDateInputValue(date: Date | string | null | undefined): string {
+  if (!date) return "";
+  const value = new Date(date);
+  if (Number.isNaN(value.getTime())) return "";
+  return value.toISOString().slice(0, 10);
+}

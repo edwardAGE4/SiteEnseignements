@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { submitWithoutReset } from "@/lib/form";
 import { uploadMedia } from "@/lib/upload";
-import { validateImageUpload } from "@/lib/file-validation";
+import { validateUpload } from "@/lib/file-validation";
 import {
   removePastorPortrait,
   savePastorPortrait,
@@ -33,7 +33,7 @@ export function PortraitSettingsForm({ currentUrl }: { currentUrl: string | null
     if (!file) return;
     setUploadError(null);
 
-    const sizeError = validateImageUpload(file);
+    const sizeError = validateUpload("image", file);
     if (sizeError) {
       setUploadError(sizeError);
       return;
@@ -55,7 +55,7 @@ export function PortraitSettingsForm({ currentUrl }: { currentUrl: string | null
       <div className="aspect-[3/4] w-full overflow-hidden rounded-2xl bg-navy-900">
         {displayedUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={displayedUrl} alt="Photo du Pasteur Jean-Marc GNALI" className="h-full w-full object-cover object-[center_25%]" />
+          <img src={displayedUrl} alt="Photo de Jean-Marc GNALI" className="h-full w-full object-cover object-[center_25%]" />
         ) : (
           <div className="flex h-full items-center justify-center px-4 text-center font-accent text-xs uppercase tracking-[0.2em] text-ivory-100/50">
             Aucune photo
@@ -111,8 +111,8 @@ export function PortraitSettingsForm({ currentUrl }: { currentUrl: string | null
           {currentUrl && !pendingUrl ? (
             <ConfirmDialog
               triggerLabel="Retirer la photo"
-              title="Retirer la photo du pasteur ?"
-              description="L'emplacement réservé sera affiché à la place sur le site."
+              title="Retirer la photo ?"
+              description="Une composition sobre aux initiales sera affichée à la place sur le site."
               confirmLabel="Retirer"
               action={removePastorPortrait}
               triggerClassName="font-data text-sm font-medium text-red-600 hover:underline"

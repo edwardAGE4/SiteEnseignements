@@ -18,6 +18,18 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+      {
+        // l'administration ne doit jamais etre indexee
+        source: "/admin/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      // anciennes URL de la bibliotheque, desormais recherche transversale
+      // (les parametres q, categorie... sont conserves)
+      { source: "/enseignements", destination: "/recherche", permanent: true },
     ];
   },
 };
