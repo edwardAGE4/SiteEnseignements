@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Hero } from "@/components/public/home/Hero";
 import { HALO, HomeSection, sideFor } from "@/components/public/home/HomeSection";
+import { RevealOnScroll } from "@/components/public/home/RevealOnScroll";
 import { ResourceFamilies } from "@/components/public/home/ResourceFamilies";
 import { AudioHighlights } from "@/components/public/home/AudioHighlights";
 import { ResourceGrid } from "@/components/public/ResourceCard";
@@ -87,6 +88,7 @@ export default async function HomePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
 
+      <RevealOnScroll />
       <Hero />
 
       <ResourceFamilies summaries={summaries} />

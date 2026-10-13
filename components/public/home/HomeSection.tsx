@@ -39,18 +39,19 @@ export function HomeSection({
     <section
       id={id}
       aria-labelledby={labelledBy}
+      data-reveal
       className={cn("relative overflow-hidden py-20 md:py-28", tone === "white" ? "bg-white" : "bg-ivory-100")}
     >
       <div
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute -top-40 h-[36rem] w-[36rem] rounded-full",
+          "reveal-halo pointer-events-none absolute -top-40 h-[36rem] w-[36rem] rounded-full",
           side === "left" ? "-right-40" : "-left-40",
         )}
         // opacite reduite (le halo du Hero, a part, garde la sienne)
         style={{ backgroundImage: `radial-gradient(circle, ${halo}, transparent 65%)`, opacity: haloOpacity }}
       />
-      <Container className="relative max-md:text-center">{children}</Container>
+      <Container className="reveal-body relative max-md:text-center">{children}</Container>
     </section>
   );
 }
