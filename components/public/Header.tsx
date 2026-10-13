@@ -65,7 +65,7 @@ export function Header() {
       <Container className="flex h-[4.5rem] items-center justify-between gap-6">
         <Link
           href="/"
-          className="font-display text-[1.35rem] font-medium tracking-[-0.01em] text-navy-900 md:text-2xl"
+          className="font-display text-[1.35rem] font-bold tracking-[-0.02em] text-navy-900 md:text-2xl"
           aria-label={`${SITE_NAME} — Accueil`}
         >
           {SITE_NAME}
@@ -80,7 +80,7 @@ export function Header() {
                 href={link.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative rounded-full px-3.5 py-2 text-[0.92rem] font-medium transition-colors",
+                  "relative rounded-full px-3.5 py-2 font-display text-base font-semibold tracking-[-0.01em] transition-colors",
                   active ? "text-navy-900" : "text-ink-700 hover:text-navy-900",
                   "after:absolute after:inset-x-3.5 after:-bottom-0.5 after:h-px after:origin-left after:bg-gold-500 after:transition-transform after:duration-300",
                   active ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100",

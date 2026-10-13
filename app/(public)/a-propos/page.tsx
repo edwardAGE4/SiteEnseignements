@@ -52,11 +52,11 @@ export default async function AboutPage() {
 
             <div className="space-y-8">
               <Eyebrow>À propos</Eyebrow>
-              <h1 className="font-display text-[clamp(2.5rem,6vw,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em] text-navy-900">
+              <h1 className="font-display text-[clamp(2.5rem,5vw,4rem)] font-bold leading-[1.1] text-navy-900">
                 {SITE_NAME}
               </h1>
               {biography.title ? (
-                <p className="font-display text-2xl italic leading-snug text-navy-700 md:text-3xl">
+                <p className="font-display text-2xl leading-snug text-navy-700 md:text-3xl">
                   <MultilineText text={biography.title} />
                 </p>
               ) : null}

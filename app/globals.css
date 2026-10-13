@@ -25,12 +25,12 @@
   --color-ivory-300: #e6e0d3;
 
   /* Texte */
-  --color-ink-900: #242a32;
-  --color-ink-700: #3c434d;
-  --color-ink-500: #69717d;
-  --color-ink-300: #737a85;
+  --color-ink-900: #0f172a; /* bleu tres fonce, presque noir */
+  --color-ink-700: #475569; /* gris fonce (navigation) */
+  --color-ink-500: #64748b;
+  --color-ink-300: #64748b;
 
-  --background: var(--color-ivory-100);
+  --background: #f8fafc; /* blanc casse moderne */
   --foreground: var(--color-ink-900);
 }
 
@@ -62,10 +62,10 @@
   --color-ink-500: var(--color-ink-500);
   --color-ink-300: var(--color-ink-300);
 
-  --font-sans: var(--font-manrope);
-  --font-display: var(--font-fraunces);
-  --font-accent: var(--font-manrope);
-  --font-data: var(--font-manrope);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-satoshi);
+  --font-accent: var(--font-satoshi);
+  --font-data: var(--font-inter);
 
   --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-fade-in: fade-in 0.9s ease both;
@@ -103,16 +103,19 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans), "Inter", system-ui, sans-serif;
+  line-height: 1.6;
   overflow-x: hidden;
 }
 
+/* Titres : Satoshi gras, lettres legerement resserrees, jamais en majuscules */
 h1,
 h2,
-h3,
-.font-display {
-  font-family: var(--font-display), ui-serif, Georgia, serif;
-  font-optical-sizing: auto;
+h3 {
+  font-family: var(--font-display), "Satoshi", "Inter", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: none;
 }
 
 /* Focus visible et coherent sur tout le site (navigation au clavier) */

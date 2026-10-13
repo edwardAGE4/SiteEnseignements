@@ -73,8 +73,8 @@ export function SectionHeading({
         ) : null}
         <Heading
           className={cn(
-            "font-display text-balance font-medium leading-[1.08] tracking-[-0.01em]",
-            Heading === "h1" ? "text-[clamp(2.25rem,5vw,3.75rem)]" : "text-[clamp(1.85rem,3.6vw,2.75rem)]",
+            "font-display text-balance font-bold leading-[1.12]",
+            Heading === "h1" ? "text-[clamp(2.5rem,5vw,4rem)] leading-[1.1]" : "text-[clamp(1.85rem,3.6vw,2.75rem)]",
             light ? "text-ivory-100" : "text-navy-900",
           )}
         >

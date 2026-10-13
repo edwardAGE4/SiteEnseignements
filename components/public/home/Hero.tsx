@@ -18,10 +18,10 @@ export function Hero() {
       <Container className="relative grid items-center gap-12 pt-12 pb-16 md:pt-16 md:pb-24 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-20 lg:pt-20 lg:pb-28">
         <div className="animate-fade-up">
           <span aria-hidden className="block h-px w-14 bg-gold-500" />
-          <h1 className="mt-8 font-display text-[clamp(2.6rem,6.4vw,5rem)] font-normal leading-[1.02] tracking-[-0.02em] text-navy-900">
+          <h1 className="mt-8 font-display text-[clamp(2.5rem,5vw,4rem)] font-bold leading-[1.1] text-navy-900">
             Bienvenue sur
             <br />
-            <span className="italic text-navy-700">mon espace média</span>
+            <span className="text-navy-700">mon espace média</span>
           </h1>
 
           <div className="mt-8 max-w-[38rem] space-y-5 text-[1.075rem] leading-[1.75] text-ink-700 md:text-lg">

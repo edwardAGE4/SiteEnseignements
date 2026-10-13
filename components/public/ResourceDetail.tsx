@@ -189,7 +189,7 @@ export function ResourceDetail({
 
   const header = (
     <div className="space-y-5">
-      <h1 className="font-display text-balance text-[clamp(2rem,4.6vw,3.4rem)] font-medium leading-[1.06] tracking-[-0.01em] text-navy-900">
+      <h1 className="font-display text-balance text-[clamp(2.25rem,4.6vw,3.5rem)] font-bold leading-[1.1] text-navy-900">
         {resource.title}
       </h1>
       {resource.subtitle && section === "livres" ? (

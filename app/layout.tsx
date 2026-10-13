@@ -1,20 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Manrope } from "next/font/google";
+import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { getSiteUrl } from "@/lib/site-url";
 import { SITE_NAME } from "@/lib/site";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  axes: ["opsz"],
+// Titres, navigation et boutons : Satoshi (Fontshare, licence libre), auto-hebergee
+const satoshi = localFont({
+  variable: "--font-satoshi",
   display: "swap",
+  src: [
+    { path: "./fonts/Satoshi-Medium.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/Satoshi-MediumItalic.woff2", weight: "500", style: "italic" },
+    { path: "./fonts/Satoshi-Bold.woff2", weight: "700", style: "normal" },
+    { path: "./fonts/Satoshi-BoldItalic.woff2", weight: "700", style: "italic" },
+  ],
+  fallback: ["Inter", "system-ui", "sans-serif"],
 });
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+// Texte courant
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -53,9 +60,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="fr"
       data-scroll-behavior="smooth"
-      className={`${fraunces.variable} ${manrope.variable} h-full antialiased`}
+      className={`${satoshi.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-ivory-100 text-ink-900">{children}</body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }
