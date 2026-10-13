@@ -29,7 +29,7 @@ export function DocumentList({
   if (documents.length === 0) return null;
 
   return (
-    <section aria-labelledby={`documents-${slug}`} className="rounded-3xl bg-white p-6 ring-1 ring-navy-900/[0.07] sm:p-8">
+    <section aria-labelledby={`documents-${slug}`} className="min-w-0 rounded-3xl bg-white p-5 ring-1 ring-navy-900/[0.07] sm:p-8">
       <h2 id={`documents-${slug}`} className="font-display text-2xl font-medium text-navy-900">
         {title}
       </h2>
@@ -51,7 +51,7 @@ export function DocumentList({
                   <FileIcon className="h-5 w-5" />
                 </span>
                 <div className="min-w-0">
-                  <p className="truncate font-semibold text-ink-900" title={document.fileName}>
+                  <p className="font-semibold wrap-anywhere text-ink-900 sm:truncate" title={document.fileName}>
                     {document.fileName}
                   </p>
                   {meta ? <p className="text-xs text-ink-500">{meta}</p> : null}

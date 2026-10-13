@@ -116,8 +116,8 @@ function MetaList({ items }: { items: { label: string; value: React.ReactNode }[
     <dl className="divide-y divide-navy-900/10 rounded-3xl bg-white px-6 ring-1 ring-navy-900/[0.07]">
       {visible.map((item) => (
         <div key={item.label} className="flex items-baseline justify-between gap-6 py-4">
-          <dt className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-500">{item.label}</dt>
-          <dd className="text-right text-sm font-medium text-ink-900">{item.value}</dd>
+          <dt className="shrink-0 text-xs font-semibold uppercase tracking-[0.16em] text-ink-500">{item.label}</dt>
+          <dd className="min-w-0 text-right text-sm font-medium break-words text-ink-900">{item.value}</dd>
         </div>
       ))}
     </dl>
@@ -188,8 +188,8 @@ export function ResourceDetail({
   ];
 
   const header = (
-    <div className="space-y-5">
-      <h1 className="font-display text-balance text-[clamp(2.25rem,4.6vw,3.5rem)] font-bold leading-[1.1] text-navy-900">
+    <div className="min-w-0 flex-1 space-y-5">
+      <h1 className="font-display text-balance break-words text-[clamp(2.25rem,4.6vw,3.5rem)] font-bold leading-[1.1] text-navy-900">
         {resource.title}
       </h1>
       {resource.subtitle && section === "livres" ? (
@@ -315,8 +315,8 @@ export function ResourceDetail({
         {section === "videos" ? (
           <div className="mt-8 space-y-10">
             {media}
-            <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
-              <div className="space-y-10">
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
+              <div className="min-w-0 space-y-10">
                 {header}
                 <OtherFormats resource={resource} section={section} />
                 {description}
@@ -328,7 +328,7 @@ export function ResourceDetail({
             </div>
           </div>
         ) : section === "livres" ? (
-          <div className="mt-8 grid gap-12 md:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-16">
+          <div className="mt-8 grid grid-cols-1 gap-12 md:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-16">
             <div className="md:sticky md:top-28 md:self-start">
               <div className="rounded-3xl bg-ivory-200 p-8">
                 <ResourceVisual
@@ -339,7 +339,7 @@ export function ResourceDetail({
                 />
               </div>
             </div>
-            <div className="space-y-10">
+            <div className="min-w-0 space-y-10">
               {header}
               {resource.author ? <p className="text-sm text-ink-500">Par <span className="font-semibold text-ink-900">{resource.author}</span></p> : null}
               {bookLinks}
@@ -349,8 +349,8 @@ export function ResourceDetail({
             </div>
           </div>
         ) : (
-          <div className="mt-8 grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
-            <div className="space-y-10">
+          <div className="mt-8 grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
+            <div className="min-w-0 space-y-10">
               <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
                 {section === "audios" ? (
                   <ResourceVisual

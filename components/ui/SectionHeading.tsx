@@ -7,12 +7,15 @@ export function Eyebrow({
   className,
   light = false,
   centered = false,
+  right = false,
 }: {
   children: React.ReactNode;
   className?: string;
   light?: boolean;
   /** centre le surtitre, avec un trait de chaque cote */
   centered?: boolean;
+  /** aligne le surtitre a droite, trait apres le texte */
+  right?: boolean;
 }) {
   const line = <span aria-hidden className={cn("h-px w-8 shrink-0", light ? "bg-gold-300" : "bg-gold-500")} />;
 
@@ -21,13 +24,14 @@ export function Eyebrow({
       className={cn(
         "flex items-center gap-3 font-accent text-xs font-semibold uppercase tracking-[0.22em]",
         centered && "justify-center text-center",
+        right && "justify-end text-right",
         light ? "text-gold-300" : "text-gold-600",
         className,
       )}
     >
-      {line}
+      {right ? null : line}
       {children}
-      {centered ? line : null}
+      {centered || right ? line : null}
     </span>
   );
 }
@@ -52,28 +56,34 @@ export function SectionHeading({
   action?: { href: string; label: string };
   className?: string;
   light?: boolean;
-  align?: "center" | "left";
+  align?: "center" | "left" | "right";
   as?: "h1" | "h2";
 }) {
   const centered = align === "center";
+  const right = align === "right";
 
   return (
     <div
       className={cn(
         "flex flex-col gap-6",
-        centered ? "items-center text-center" : "md:flex-row md:items-end md:justify-between",
+        centered
+          ? "items-center text-center"
+          : right
+            ? "items-end md:flex-row-reverse md:justify-between"
+            : "items-start md:flex-row md:items-end md:justify-between",
         className,
       )}
     >
-      <div className={cn("space-y-4", centered && "mx-auto max-w-2xl")}>
+      <div className={cn("space-y-4", centered ? "mx-auto max-w-2xl" : "max-md:self-stretch", right && "flex flex-col items-end")}>
         {eyebrow ? (
-          <Eyebrow light={light} centered={centered}>
+          <Eyebrow light={light} centered={centered} right={right}>
             {eyebrow}
           </Eyebrow>
         ) : null}
         <Heading
           className={cn(
             "font-display text-balance font-bold leading-[1.12]",
+            right ? "text-right" : !centered && "text-left",
             Heading === "h1" ? "text-[clamp(2.5rem,5vw,4rem)] leading-[1.1]" : "text-[clamp(1.85rem,3.6vw,2.75rem)]",
             light ? "text-ivory-100" : "text-navy-900",
           )}
@@ -81,7 +91,13 @@ export function SectionHeading({
           {title}
         </Heading>
         {description ? (
-          <p className={cn("max-w-2xl text-pretty text-base leading-relaxed md:text-lg", light ? "text-ivory-100/75" : "text-ink-500")}>
+          <p
+            className={cn(
+              "max-w-2xl text-pretty text-base leading-relaxed md:text-lg",
+              right && "self-stretch md:self-end md:text-right",
+              light ? "text-ivory-100/75" : "text-ink-500",
+            )}
+          >
             {description}
           </p>
         ) : null}

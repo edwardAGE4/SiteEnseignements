@@ -55,41 +55,50 @@ export default async function AdminDashboardPage() {
         </p>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-ink-900/10 bg-ivory-50 p-6">
+      {/* grid-cols-1 + min-w-0 : sans eux, un titre long elargit la colonne au-dela de l'ecran mobile */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="min-w-0 rounded-2xl border border-ink-900/10 bg-ivory-50 p-4 sm:p-6">
           <h2 className="font-display text-lg font-medium text-navy-900">Les plus consultées</h2>
           <ul className="mt-4 divide-y divide-ink-900/10">
             {stats.topResources.map((resource, index) => (
-              <li key={resource.id} className="flex items-center justify-between gap-4 py-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className="font-data text-xs text-ink-500">{index + 1}</span>
-                  <Link href={`/admin/enseignements/${resource.id}/modifier`} className="truncate text-sm font-medium text-navy-900 hover:text-gold-700">
+              <li key={resource.id} className="flex items-start gap-3 py-3">
+                <span className="w-4 shrink-0 pt-0.5 font-data text-xs text-ink-500">{index + 1}</span>
+                <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                  <Link
+                    href={`/admin/enseignements/${resource.id}/modifier`}
+                    className="min-w-0 text-sm font-medium wrap-anywhere text-navy-900 hover:text-gold-700 sm:truncate"
+                  >
                     {resource.title}
                   </Link>
+                  <span className="shrink-0 font-data text-xs text-ink-500">
+                    {TYPE_LABELS[resource.type]} · {resource.viewCount} vues
+                  </span>
                 </div>
-                <span className="shrink-0 font-data text-xs text-ink-500">
-                  {TYPE_LABELS[resource.type]} · {resource.viewCount} vues
-                </span>
               </li>
             ))}
             {stats.topResources.length === 0 ? <li className="py-3 text-sm text-ink-500">Aucune ressource publiée pour le moment.</li> : null}
           </ul>
         </div>
 
-        <div className="rounded-2xl border border-ink-900/10 bg-ivory-50 p-6">
+        <div className="min-w-0 rounded-2xl border border-ink-900/10 bg-ivory-50 p-4 sm:p-6">
           <h2 className="font-display text-lg font-medium text-navy-900">Activité récente</h2>
           <ul className="mt-4 divide-y divide-ink-900/10">
             {stats.recentResources.map((resource) => (
-              <li key={resource.id} className="flex items-center justify-between gap-4 py-3">
-                <div className="min-w-0">
-                  <Link href={`/admin/enseignements/${resource.id}/modifier`} className="block truncate text-sm font-medium text-navy-900 hover:underline">
+              <li key={resource.id} className="flex items-start justify-between gap-3 py-3 sm:items-center sm:gap-4">
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={`/admin/enseignements/${resource.id}/modifier`}
+                    className="block text-sm font-medium wrap-anywhere text-navy-900 hover:underline sm:truncate"
+                  >
                     {resource.title}
                   </Link>
-                  <p className="font-data text-xs text-ink-500">
+                  <p className="mt-0.5 font-data text-xs wrap-anywhere text-ink-500">
                     {TYPE_LABELS[resource.type]} · {resource.createdBy.name} · {formatDate(resource.updatedAt)}
                   </p>
                 </div>
-                <StatusBadge status={resource.status} />
+                <span className="shrink-0">
+                  <StatusBadge status={resource.status} />
+                </span>
               </li>
             ))}
             {stats.recentResources.length === 0 ? <li className="py-3 text-sm text-ink-500">Aucune activité pour le moment.</li> : null}

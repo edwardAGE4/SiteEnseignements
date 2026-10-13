@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Hero } from "@/components/public/home/Hero";
+import { HALO, HomeSection, sideFor } from "@/components/public/home/HomeSection";
 import { ResourceFamilies } from "@/components/public/home/ResourceFamilies";
 import { AudioHighlights } from "@/components/public/home/AudioHighlights";
 import { ResourceGrid } from "@/components/public/ResourceCard";
@@ -10,7 +10,6 @@ import { SECTIONS } from "@/lib/sections";
 import { getPortraitUrl } from "@/lib/settings";
 import { getSiteUrl } from "@/lib/site-url";
 import { SITE_NAME } from "@/lib/site";
-import { cn } from "@/lib/utils";
 
 export const revalidate = 60;
 
@@ -30,22 +29,6 @@ export async function generateMetadata(): Promise<Metadata> {
       images: portrait ? [{ url: portrait, alt: SITE_NAME }] : undefined,
     },
   };
-}
-
-function HomeSection({
-  children,
-  tone = "ivory",
-  id,
-}: {
-  children: React.ReactNode;
-  tone?: "ivory" | "white";
-  id?: string;
-}) {
-  return (
-    <section id={id} className={cn("py-20 md:py-28", tone === "white" ? "bg-white" : "bg-ivory-100")}>
-      <Container>{children}</Container>
-    </section>
-  );
 }
 
 export default async function HomePage() {
@@ -75,15 +58,30 @@ export default async function HomePage() {
     { "@context": "https://schema.org", "@type": "Person", name: SITE_NAME, url: `${siteUrl}/a-propos` },
   ];
 
-  // sections alternees ivoire / blanc, uniquement pour les rubriques non vides
+  // rubriques non vides ; fond ivoire / blanc et titre gauche / droite alternes
+  // (index 0 = "Les ressources", 1 = "Nouveautés", puis ces rubriques)
   const typed = [
-    { key: "audios", items: audios },
-    { key: "videos", items: videos },
-    { key: "livres", items: books },
-    { key: "fichiers-pratiques", items: files },
+    {
+      key: "audios",
+      eyebrow: "À écouter",
+      items: audios,
+      content: <AudioHighlights audios={audios} />,
+    },
+    { key: "videos", eyebrow: "À regarder", items: videos, content: <ResourceGrid resources={videos} section="videos" /> },
+    {
+      key: "livres",
+      eyebrow: "À lire",
+      items: books,
+      content: <ResourceGrid resources={books} section="livres" columns={4} />,
+    },
+    {
+      key: "fichiers-pratiques",
+      eyebrow: "À télécharger",
+      items: files,
+      content: <ResourceGrid resources={files} section="fichiers-pratiques" />,
+    },
   ] as const;
   const visible = typed.filter((entry) => entry.items.length > 0);
-  const toneFor = (key: string) => (visible.findIndex((entry) => entry.key === key) % 2 === 0 ? "white" : "ivory");
 
   return (
     <>
@@ -93,8 +91,9 @@ export default async function HomePage() {
 
       <ResourceFamilies summaries={summaries} />
 
-      <HomeSection>
+      <HomeSection halo={HALO.nouveautes} side={sideFor(1)}>
         <SectionHeading
+          align={sideFor(1)}
           eyebrow="Nouveautés"
           title="Dernières publications"
           action={latest.length > 0 ? { href: "/recherche", label: "Toutes les ressources" } : undefined}
@@ -109,61 +108,22 @@ export default async function HomePage() {
         </div>
       </HomeSection>
 
-      {audios.length > 0 ? (
-        <HomeSection tone={toneFor("audios")}>
-          <SectionHeading
-            eyebrow="À écouter"
-            title={SECTIONS.audios.label}
-            description={SECTIONS.audios.description}
-            action={{ href: "/audios", label: SECTIONS.audios.allLabel }}
-          />
-          <div className="mt-12">
-            <AudioHighlights audios={audios} />
-          </div>
-        </HomeSection>
-      ) : null}
-
-      {videos.length > 0 ? (
-        <HomeSection tone={toneFor("videos")}>
-          <SectionHeading
-            eyebrow="À regarder"
-            title={SECTIONS.videos.label}
-            description={SECTIONS.videos.description}
-            action={{ href: "/videos", label: SECTIONS.videos.allLabel }}
-          />
-          <div className="mt-12">
-            <ResourceGrid resources={videos} section="videos" />
-          </div>
-        </HomeSection>
-      ) : null}
-
-      {books.length > 0 ? (
-        <HomeSection tone={toneFor("livres")}>
-          <SectionHeading
-            eyebrow="À lire"
-            title={SECTIONS.livres.label}
-            description={SECTIONS.livres.description}
-            action={{ href: "/livres", label: SECTIONS.livres.allLabel }}
-          />
-          <div className="mt-12">
-            <ResourceGrid resources={books} section="livres" columns={4} />
-          </div>
-        </HomeSection>
-      ) : null}
-
-      {files.length > 0 ? (
-        <HomeSection tone={toneFor("fichiers-pratiques")}>
-          <SectionHeading
-            eyebrow="À télécharger"
-            title={SECTIONS["fichiers-pratiques"].label}
-            description={SECTIONS["fichiers-pratiques"].description}
-            action={{ href: "/fichiers-pratiques", label: SECTIONS["fichiers-pratiques"].allLabel }}
-          />
-          <div className="mt-12">
-            <ResourceGrid resources={files} section="fichiers-pratiques" />
-          </div>
-        </HomeSection>
-      ) : null}
+      {visible.map((entry, index) => {
+        const section = SECTIONS[entry.key];
+        const side = sideFor(index + 2);
+        return (
+          <HomeSection key={entry.key} tone={index % 2 === 0 ? "white" : "ivory"} halo={HALO[entry.key]} side={side}>
+            <SectionHeading
+              align={side}
+              eyebrow={entry.eyebrow}
+              title={section.label}
+              description={section.description}
+              action={{ href: section.path, label: section.allLabel }}
+            />
+            <div className="mt-12">{entry.content}</div>
+          </HomeSection>
+        );
+      })}
     </>
   );
 }

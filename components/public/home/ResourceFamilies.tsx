@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container } from "@/components/ui/Container";
+import { HALO, HomeSection, sideFor } from "@/components/public/home/HomeSection";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ArrowRightIcon, TypeIcon } from "@/components/ui/Icons";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -18,9 +18,9 @@ const ACTIONS: Record<Summary["section"], string> = {
 /** Les quatre familles de ressources (cible du bouton "Explorer les ressources"). */
 export function ResourceFamilies({ summaries }: { summaries: Summary[] }) {
   return (
-    <section id="ressources" aria-labelledby="ressources-titre" className="bg-white py-20 md:py-28">
-      <Container>
+    <HomeSection id="ressources" labelledBy="ressources-titre" tone="white" halo={HALO.ressources} side={sideFor(0)}>
         <SectionHeading
+          align={sideFor(0)}
           eyebrow="Les ressources"
           title={<span id="ressources-titre">Quatre formats pour apprendre et avancer</span>}
           description="Écoutez, regardez, lisez ou téléchargez : toutes les ressources sont accessibles gratuitement."
@@ -66,7 +66,7 @@ export function ResourceFamilies({ summaries }: { summaries: Summary[] }) {
                     </p>
                   ) : null}
                   <p className="mt-3 text-[0.95rem] leading-relaxed text-ink-500">{summary.description}</p>
-                  <span className="mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-semibold text-navy-900">
+                  <span className="mt-auto inline-flex items-center gap-1.5 pt-6 max-md:self-center text-sm font-semibold text-navy-900">
                     {ACTIONS[summary.section]}
                     <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </span>
@@ -75,7 +75,6 @@ export function ResourceFamilies({ summaries }: { summaries: Summary[] }) {
             </li>
           ))}
         </ul>
-      </Container>
-    </section>
+    </HomeSection>
   );
 }
