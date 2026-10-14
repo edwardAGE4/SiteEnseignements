@@ -22,6 +22,7 @@ export function ResourceFamilies({ summaries }: { summaries: Summary[] }) {
         <SectionHeading
           align={sideFor(0)}
           centerText
+          centerTitle
           eyebrow="Les ressources"
           title={<span id="ressources-titre">Quatre formats pour apprendre et avancer</span>}
           description="Écoutez, regardez, lisez ou téléchargez : toutes les ressources sont accessibles gratuitement."
