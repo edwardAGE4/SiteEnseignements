@@ -3,12 +3,12 @@ import { cn } from "@/lib/utils";
 
 /** Teintes du halo decoratif de chaque section de l'accueil. */
 export const HALO = {
-  ressources: "rgba(185,154,98,0.3)",
+  ressources: "rgba(185, 154, 98, 0.35)",
   nouveautes: "#0052d124",
-  audios: "rgba(16,185,129,0.14)",
-  videos: "rgba(124,58,237,0.12)",
-  livres: "rgba(220,38,38,0.11)",
-  "fichiers-pratiques": "rgba(185,154,98,0.22)",
+  audios: "rgba(16, 185, 129, 0.29)",
+  videos: "rgba(124, 58, 237, 0.32)",
+  livres: "rgba(220, 38, 38, 0.26)",
+  "fichiers-pratiques": "rgba(185, 154, 98, 0.3)",
 } as const;
 
 /** Cote du titre pour la section n : droite, gauche, droite... (le halo est du cote oppose). */
@@ -16,7 +16,7 @@ export const sideFor = (index: number) => (index % 2 === 0 ? "right" : "left");
 
 /**
  * Section de l'accueil avec un halo colore oppose au titre.
- * Sur mobile, les textes sont centres ; les titres gardent leur alignement (SectionHeading).
+ * Les textes sont centres ; les titres gardent leur alignement alterne (SectionHeading).
  */
 export function HomeSection({
   children,
@@ -51,7 +51,7 @@ export function HomeSection({
         // opacite reduite (le halo du Hero, a part, garde la sienne)
         style={{ backgroundImage: `radial-gradient(circle, ${halo}, transparent 65%)`, opacity: haloOpacity }}
       />
-      <Container className="reveal-body relative max-md:text-center">{children}</Container>
+      <Container className="reveal-body relative text-center">{children}</Container>
     </section>
   );
 }

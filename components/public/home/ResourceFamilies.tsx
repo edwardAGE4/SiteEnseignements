@@ -21,6 +21,7 @@ export function ResourceFamilies({ summaries }: { summaries: Summary[] }) {
     <HomeSection id="ressources" labelledBy="ressources-titre" tone="white" halo={HALO.ressources} side={sideFor(0)}>
         <SectionHeading
           align={sideFor(0)}
+          centerText
           eyebrow="Les ressources"
           title={<span id="ressources-titre">Quatre formats pour apprendre et avancer</span>}
           description="Écoutez, regardez, lisez ou téléchargez : toutes les ressources sont accessibles gratuitement."

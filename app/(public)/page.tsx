@@ -96,6 +96,8 @@ export default async function HomePage() {
       <HomeSection halo={HALO.nouveautes} side={sideFor(1)}>
         <SectionHeading
           align={sideFor(1)}
+          centerText
+          centerTitle
           eyebrow="Nouveautés"
           title="Dernières publications"
           action={latest.length > 0 ? { href: "/recherche", label: "Toutes les ressources" } : undefined}
@@ -117,6 +119,8 @@ export default async function HomePage() {
           <HomeSection key={entry.key} tone={index % 2 === 0 ? "white" : "ivory"} halo={HALO[entry.key]} side={side}>
             <SectionHeading
               align={side}
+              centerText
+              centerTitle
               eyebrow={entry.eyebrow}
               title={section.label}
               description={section.description}

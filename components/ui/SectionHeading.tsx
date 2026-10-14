@@ -49,7 +49,13 @@ export function SectionHeading({
   light = false,
   align = "left",
   as: Heading = "h2",
+  centerText = false,
+  centerTitle = false,
 }: {
+  /** centre la description sous un titre aligne a gauche ou a droite (accueil) */
+  centerText?: boolean;
+  /** centre aussi le titre ; le surtitre reste a gauche ou a droite (accueil) */
+  centerTitle?: boolean;
   eyebrow?: string;
   title: React.ReactNode;
   description?: React.ReactNode;
@@ -74,7 +80,14 @@ export function SectionHeading({
         className,
       )}
     >
-      <div className={cn("space-y-4", centered ? "mx-auto max-w-2xl" : "max-md:self-stretch", right && "flex flex-col items-end")}>
+      <div
+        className={cn(
+          "space-y-4",
+          centered ? "mx-auto max-w-2xl" : "max-md:self-stretch",
+          right && "flex flex-col items-end",
+          centerText && !centered && "self-stretch md:flex-1",
+        )}
+      >
         {eyebrow ? (
           <Eyebrow light={light} centered={centered} right={right}>
             {eyebrow}
@@ -83,7 +96,8 @@ export function SectionHeading({
         <Heading
           className={cn(
             "font-display text-balance font-bold leading-[1.12]",
-            right ? "text-right" : !centered && "text-left",
+            // accueil : titre centre, le surtitre garde son cote alterne
+            centerTitle && !centered ? "self-stretch text-center" : right ? "text-right" : !centered && "text-left",
             Heading === "h1" ? "text-[clamp(2.5rem,5vw,4rem)] leading-[1.1]" : "text-[clamp(1.85rem,3.6vw,2.75rem)]",
             light ? "text-ivory-100" : "text-navy-900",
           )}
@@ -94,7 +108,7 @@ export function SectionHeading({
           <p
             className={cn(
               "max-w-2xl text-pretty text-base leading-relaxed md:text-lg",
-              right && "self-stretch md:self-end md:text-right",
+              centerText ? "mx-auto self-center text-center" : right && "self-stretch md:self-end md:text-right",
               light ? "text-ivory-100/75" : "text-ink-500",
             )}
           >
