@@ -8,7 +8,10 @@ export default defineConfig({
   migrations: {
     path: "prisma/migrations",
   },
+  // CLI uniquement (migrate deploy...). Les migrations prennent un verrou
+  // consultatif Postgres, impossible a travers le pooler Neon (PgBouncer) :
+  // on utilise la connexion directe si elle existe. Le site garde DATABASE_URL.
   datasource: {
-    url: process.env["DATABASE_URL"],
+    url: process.env["DATABASE_URL_UNPOOLED"] ?? process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"],
   },
 });
