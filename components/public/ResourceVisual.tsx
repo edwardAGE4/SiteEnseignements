@@ -1,7 +1,6 @@
 import type { ResourceType } from "@/generated/prisma/enums";
 import { parseVideoUrl } from "@/lib/media";
 import { cn } from "@/lib/utils";
-import { TypeIcon } from "@/components/ui/Icons";
 import { SafeImage } from "@/components/ui/SafeImage";
 
 type VisualResource = {
@@ -10,22 +9,18 @@ type VisualResource = {
   videoUrl: string | null;
 };
 
+/** Logo JMG, affiche quand une ressource n'a pas d'image (ou que son image est introuvable). */
+export const DEFAULT_RESOURCE_IMAGE = "/icons/icon-512.png";
+
 /** Image a afficher pour une ressource : couverture, sinon miniature de la video. */
 export function resourceImageUrl(resource: VisualResource): string | null {
   return resource.coverImageUrl || parseVideoUrl(resource.videoUrl)?.thumbnailUrl || null;
 }
 
-const FALLBACK_TONES: Record<ResourceType, string> = {
-  AUDIO: "bg-navy-900 text-gold-300",
-  VIDEO: "bg-navy-800 text-gold-300",
-  BOOK: "bg-ivory-200 text-navy-700",
-  FILE: "bg-navy-100 text-navy-700",
-};
-
 /**
  * Visuel d'une ressource. `alt` vide par defaut : sur une carte, le titre est
  * deja lu juste a cote (image decorative). Si l'image est absente ou
- * introuvable, un visuel sobre avec l'icone du type est affiche.
+ * introuvable, le logo JMG est affiche sur fond noir (couleur du logo).
  */
 export function ResourceVisual({
   resource,
@@ -43,10 +38,15 @@ export function ResourceVisual({
   const src = resourceImageUrl(resource);
 
   return (
-    <div className={cn("relative overflow-hidden", FALLBACK_TONES[resource.type], className)}>
-      <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_30%_20%,rgba(185,154,98,0.18),transparent_60%)]">
-        <TypeIcon type={resource.type} className="h-10 w-10 opacity-80" />
-      </div>
+    <div className={cn("relative overflow-hidden bg-black", className)}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- logo statique, sous l'image de la ressource */}
+      <img
+        src={DEFAULT_RESOURCE_IMAGE}
+        alt={src ? "" : alt}
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-contain"
+      />
       {src ? <SafeImage src={src} alt={alt} priority={priority} className={imageClassName} /> : null}
     </div>
   );

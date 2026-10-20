@@ -5,7 +5,7 @@ import { formatDurationHuman, formatFileSize } from "@/lib/media";
 import { formatLabel } from "@/lib/file-validation";
 import { cn, formatDate, resourceSummary } from "@/lib/utils";
 import { ResourceVisual } from "@/components/public/ResourceVisual";
-import { ArrowRightIcon, PlayIcon, TypeIcon } from "@/components/ui/Icons";
+import { ArrowRightIcon, PlayIcon } from "@/components/ui/Icons";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 type Variant = "media" | "book" | "file";
@@ -95,9 +95,8 @@ export function ResourceCard({
   if (variant === "file") {
     return (
       <article className={cn(shell, "items-start gap-5 p-6")}>
-        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-navy-100 text-navy-700">
-          <TypeIcon type="FILE" className="h-7 w-7" />
-        </span>
+        <ResourceVisual resource={resource} className="aspect-square w-14 shrink-0 rounded-2xl" />
+
         {body}
       </article>
     );

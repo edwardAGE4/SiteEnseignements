@@ -4,7 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { RichText } from "@/components/ui/RichText";
 import { buttonClassName } from "@/components/ui/Button";
-import { ExternalIcon, TypeIcon, YoutubeIcon } from "@/components/ui/Icons";
+import { ExternalIcon, YoutubeIcon } from "@/components/ui/Icons";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { AudioPlayer } from "@/components/public/AudioPlayer";
 import { VideoPlayer } from "@/components/public/VideoPlayer";
@@ -366,18 +366,16 @@ export function ResourceDetail({
           <div className="mt-8 grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
             <div className="min-w-0 space-y-10">
               <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
-                {section === "audios" ? (
-                  <ResourceVisual
-                    resource={resource}
-                    alt=""
-                    priority
-                    className="aspect-square w-36 shrink-0 rounded-3xl sm:w-44"
-                  />
-                ) : (
-                  <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-navy-100 text-navy-700">
-                    <TypeIcon type="FILE" className="h-9 w-9" />
-                  </span>
-                )}
+                <ResourceVisual
+                  resource={resource}
+                  alt=""
+                  priority
+                  className={
+                    section === "audios"
+                      ? "aspect-square w-36 shrink-0 rounded-3xl sm:w-44"
+                      : "aspect-square w-20 shrink-0 rounded-3xl"
+                  }
+                />
                 {header}
               </div>
               {media}
