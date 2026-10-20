@@ -170,40 +170,6 @@ h3 {
   }
 }
 
-/* Accueil : apparition des sections a chaque descente (RevealOnScroll).
-   html[data-anim] n'est pose que par JS : sans JS, tout reste visible. */
-@media (prefers-reduced-motion: no-preference) {
-  html[data-anim] [data-reveal] .reveal-body > *,
-  html[data-anim] [data-reveal] .reveal {
-    opacity: 0;
-    transform: translateY(2rem);
-    animation: none;
-    transition:
-      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  html[data-anim] [data-reveal] .reveal-halo {
-    scale: 0.6;
-    transition: scale 1.4s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  html[data-anim] [data-reveal][data-shown] .reveal-body > *,
-  html[data-anim] [data-reveal][data-shown] .reveal {
-    opacity: 1;
-    transform: none;
-  }
-  html[data-anim] [data-reveal][data-shown] .reveal-halo {
-    scale: 1;
-  }
-  /* titre, puis contenu, puis cartes en cascade */
-  html[data-anim] [data-reveal][data-shown] .reveal-body > :nth-child(2) {
-    transition-delay: 0.12s;
-  }
-  html[data-anim] [data-reveal][data-shown] .reveal:nth-child(1) { transition-delay: 0.2s; }
-  html[data-anim] [data-reveal][data-shown] .reveal:nth-child(2) { transition-delay: 0.3s; }
-  html[data-anim] [data-reveal][data-shown] .reveal:nth-child(3) { transition-delay: 0.4s; }
-  html[data-anim] [data-reveal][data-shown] .reveal:nth-child(n + 4) { transition-delay: 0.5s; }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

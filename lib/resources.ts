@@ -233,26 +233,34 @@ export async function listCategoriesInUse(section?: Section) {
 export const SHELF_SIZE = 12;
 
 /**
- * Rangees d'une rubrique, une par categorie (ordre de l'administration), avec
- * les ressources les plus recentes ; les ressources sans categorie forment une
- * derniere rangee « Autres ». Une ressource a plusieurs categories apparait
- * dans chacune.
+ * Rangees par categorie (ordre de l'administration), avec les ressources les
+ * plus recentes, pour une rubrique ou tous types confondus (sans `section`).
+ * Les ressources sans categorie forment une derniere rangee « Autres ». Une
+ * ressource a plusieurs categories apparait dans chacune.
  */
-export async function listResourceShelves(section: Section) {
+export async function listResourceShelves(section?: Section) {
   const categories = await listCategoriesInUse(section);
 
   const [shelves, others] = await Promise.all([
     Promise.all(
       categories.map(async (category) => {
         const { items, total } = await listResources({ section, categorySlugs: [category.slug], pageSize: SHELF_SIZE });
-        return { slug: category.slug as string | null, name: category.name, description: category.description, items, total };
+        return { id: category.slug, slug: category.slug as string | null, name: category.name, description: category.description, items, total };
       }),
     ),
     listResources({ section, uncategorized: true, pageSize: SHELF_SIZE }),
   ]);
 
   if (others.total > 0) {
-    shelves.push({ slug: null, name: categories.length > 0 ? "Autres" : SECTIONS[section].allLabel, description: null, items: others.items, total: others.total });
+    const allLabel = section ? SECTIONS[section].allLabel : "Toutes les ressources";
+    shelves.push({
+      id: "autres",
+      slug: null,
+      name: categories.length > 0 ? (section ? "Autres" : "Autres ressources") : allLabel,
+      description: null,
+      items: others.items,
+      total: others.total,
+    });
   }
   return shelves.filter((shelf) => shelf.total > 0);
 }

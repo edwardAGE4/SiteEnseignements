@@ -12,6 +12,5 @@ export const NAV_LINKS = [
 ] as const;
 
 export const LEGAL_LINKS = [
-  { href: "/mentions-legales", label: "Mentions légales" },
   { href: "/confidentialite", label: "Politique de confidentialité" },
 ] as const;

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { buttonClassName } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Hero } from "@/components/public/home/Hero";
-import { HALO, HomeSection, sideFor } from "@/components/public/home/HomeSection";
-import { RevealOnScroll } from "@/components/public/home/RevealOnScroll";
-import { ResourceFamilies } from "@/components/public/home/ResourceFamilies";
-import { AudioHighlights } from "@/components/public/home/AudioHighlights";
-import { ResourceGrid } from "@/components/public/ResourceCard";
-import { getLatestResources, getSectionSummaries } from "@/lib/resources";
-import { SECTIONS } from "@/lib/sections";
+import { FormatShortcuts } from "@/components/public/home/FormatShortcuts";
+import { ResourceShelves, type Shelf } from "@/components/public/ResourceShelves";
+import { getLatestResources, getSectionSummaries, listResourceShelves, SHELF_SIZE } from "@/lib/resources";
 import { getPortraitUrl } from "@/lib/settings";
 import { getSiteUrl } from "@/lib/site-url";
 import { SITE_NAME } from "@/lib/site";
@@ -32,15 +32,34 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+/**
+ * Accueil : hero, raccourcis par format, puis « Explorer par thème » (une
+ * rangee de nouveautes, puis une rangee par categorie, tous formats melanges)
+ * et un encart vers la page À propos.
+ */
 export default async function HomePage() {
-  const [summaries, latest, audios, videos, books, files] = await Promise.all([
+  const [summaries, latest, categoryShelves] = await Promise.all([
     getSectionSummaries(),
-    getLatestResources(3),
-    getLatestResources(3, { section: "audios", featuredFirst: true }),
-    getLatestResources(3, { section: "videos", featuredFirst: true }),
-    getLatestResources(4, { section: "livres", featuredFirst: true }),
-    getLatestResources(4, { section: "fichiers-pratiques", featuredFirst: true }),
+    getLatestResources(SHELF_SIZE),
+    listResourceShelves(),
   ]);
+
+  const shelves: Shelf[] = [
+    ...(latest.length > 0
+      ? [
+          {
+            id: "nouveautes",
+            slug: null,
+            name: "Nouveautés",
+            description: "Les derniers contenus ajoutés",
+            items: latest,
+            total: latest.length,
+            href: "/recherche?tri=recent",
+          },
+        ]
+      : []),
+    ...categoryShelves,
+  ];
 
   const siteUrl = getSiteUrl();
   const jsonLd = [
@@ -59,77 +78,48 @@ export default async function HomePage() {
     { "@context": "https://schema.org", "@type": "Person", name: SITE_NAME, url: `${siteUrl}/a-propos` },
   ];
 
-  // rubriques non vides ; fond ivoire / blanc et titre gauche / droite alternes
-  // (index 0 = "Les ressources", 1 = "Nouveautés", puis ces rubriques)
-  const typed = [
-    {
-      key: "audios",
-      eyebrow: "À écouter",
-      items: audios,
-      content: <AudioHighlights audios={audios} />,
-    },
-    { key: "videos", eyebrow: "À regarder", items: videos, content: <ResourceGrid resources={videos} section="videos" /> },
-    {
-      key: "livres",
-      eyebrow: "À lire",
-      items: books,
-      content: <ResourceGrid resources={books} section="livres" columns={4} />,
-    },
-    {
-      key: "fichiers-pratiques",
-      eyebrow: "À télécharger",
-      items: files,
-      content: <ResourceGrid resources={files} section="fichiers-pratiques" />,
-    },
-  ] as const;
-  const visible = typed.filter((entry) => entry.items.length > 0);
-
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
 
-      <RevealOnScroll />
       <Hero />
+      <FormatShortcuts summaries={summaries} />
 
-      <ResourceFamilies summaries={summaries} />
+      {/* ancre du bouton « Explorer les ressources » du hero */}
+      <section id="ressources" className="py-14 md:py-20">
+        <Container>
+          <SectionHeading eyebrow="Ressources" title="Explorer par thème" />
+          <div className="mt-10 md:mt-12">
+            {shelves.length > 0 ? (
+              <ResourceShelves
+                shelves={shelves}
+                headingLevel="h3"
+                // « Autres ressources » (sans categorie) : liste complete
+                seeAllHref={(slug) => (slug ? `/categories/${slug}` : "/recherche?tri=recent")}
+              />
+            ) : (
+              <EmptyState
+                title="Les premières ressources arrivent bientôt"
+                description="Du contenu utile, édifiant et pratique est ajouté régulièrement. Revenez prochainement."
+              />
+            )}
+          </div>
+        </Container>
+      </section>
 
-      <HomeSection halo={HALO.nouveautes} side={sideFor(1)}>
-        <SectionHeading
-          align={sideFor(1)}
-          centerText
-          centerTitle
-          eyebrow="Nouveautés"
-          title="Dernières publications"
-          action={latest.length > 0 ? { href: "/recherche", label: "Toutes les ressources" } : undefined}
-        />
-        <div className="mt-12">
-          <ResourceGrid
-            resources={latest}
-            showType
-            emptyTitle="Les premières ressources arrivent bientôt"
-            emptyDescription="Du contenu utile, édifiant et pratique est ajouté régulièrement. Revenez prochainement."
-          />
-        </div>
-      </HomeSection>
-
-      {visible.map((entry, index) => {
-        const section = SECTIONS[entry.key];
-        const side = sideFor(index + 2);
-        return (
-          <HomeSection key={entry.key} tone={index % 2 === 0 ? "white" : "ivory"} halo={HALO[entry.key]} side={side}>
-            <SectionHeading
-              align={side}
-              centerText
-              centerTitle
-              eyebrow={entry.eyebrow}
-              title={section.label}
-              description={section.description}
-              action={{ href: section.path, label: section.allLabel }}
-            />
-            <div className="mt-12">{entry.content}</div>
-          </HomeSection>
-        );
-      })}
+      <section className="border-b border-ivory-100/10 bg-navy-900">
+        <Container className="flex flex-col items-start gap-5 py-12 md:flex-row md:items-center md:justify-between md:gap-8">
+          <div>
+            <h2 className="font-display text-2xl font-medium text-ivory-100 md:text-[1.7rem]">Qui est {SITE_NAME} ?</h2>
+            <p className="mt-2 max-w-2xl text-[0.95rem] text-ivory-100/70">
+              Découvrez son parcours, sa démarche et pourquoi il partage gratuitement ces ressources.
+            </p>
+          </div>
+          <Link href="/a-propos" className={buttonClassName({ variant: "ghost", className: "shrink-0" })}>
+            En savoir plus
+          </Link>
+        </Container>
+      </section>
     </>
   );
 }

@@ -68,7 +68,12 @@ export async function LibraryPage({ section, params }: { section: Section; param
           </Suspense>
           <div className="mt-10">
             {shelves.length > 0 ? (
-              <ResourceShelves shelves={shelves} section={section} />
+              <ResourceShelves
+                shelves={shelves}
+                section={section}
+                // pas de filtre « sans categorie » : la rangee « Autres » ouvre la liste complete
+                seeAllHref={(slug) => (slug ? `${config.path}?categorie=${encodeURIComponent(slug)}` : `${config.path}?tri=recent`)}
+              />
             ) : (
               <EmptyState
                 title={config.emptyTitle}

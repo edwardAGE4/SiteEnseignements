@@ -6,7 +6,9 @@ import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { LibraryFilters } from "@/components/public/LibraryFilters";
 import { ResourceGrid } from "@/components/public/ResourceCard";
 import { Pagination } from "@/components/public/Pagination";
-import { listCategoriesInUse, listResources, parsePage, parseSort } from "@/lib/resources";
+import { ResourceShelves } from "@/components/public/ResourceShelves";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { listCategoriesInUse, listResourceShelves, listResources, parsePage, parseSort } from "@/lib/resources";
 import { SECTIONS, type Section } from "@/lib/sections";
 
 type SearchParams = { q?: string; type?: string; categorie?: string; tri?: string; page?: string };
@@ -33,16 +35,21 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const categorySlug = params.categorie?.trim() || undefined;
   const page = parsePage(params.page);
   const hasCriteria = Boolean(query || section || categorySlug);
+  // sans recherche, filtre, tri ni page : toutes les ressources rangees par categorie
+  const browsing = !hasCriteria && !params.tri && !params.page;
 
-  const [{ items, total, pageCount }, categories] = await Promise.all([
-    listResources({
-      section,
-      query,
-      categorySlugs: categorySlug ? [categorySlug] : undefined,
-      sort: parseSort(params.tri),
-      page,
-    }),
+  const [{ items, total, pageCount }, categories, shelves] = await Promise.all([
+    browsing
+      ? { items: [], total: 0, pageCount: 1 }
+      : listResources({
+          section,
+          query,
+          categorySlugs: categorySlug ? [categorySlug] : undefined,
+          sort: parseSort(params.tri),
+          page,
+        }),
     listCategoriesInUse(),
+    browsing ? listResourceShelves() : [],
   ]);
 
   return (
@@ -69,29 +76,44 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           />
         </Suspense>
 
-        <p className="mt-8 text-sm text-ink-500" role="status">
-          {total === 0 ? "Aucun résultat" : `${total} résultat${total > 1 ? "s" : ""}`}
-          {pageCount > 1 ? ` · page ${page} sur ${pageCount}` : ""}
-        </p>
+        {browsing ? (
+          <div className="mt-10">
+            {shelves.length > 0 ? (
+              <ResourceShelves
+                shelves={shelves}
+                seeAllHref={(slug) => (slug ? `/recherche?categorie=${encodeURIComponent(slug)}` : "/recherche?tri=recent")}
+              />
+            ) : (
+              <EmptyState title="Aucune ressource pour le moment" />
+            )}
+          </div>
+        ) : (
+          <>
+            <p className="mt-8 text-sm text-ink-500" role="status">
+              {total === 0 ? "Aucun résultat" : `${total} résultat${total > 1 ? "s" : ""}`}
+              {pageCount > 1 ? ` · page ${page} sur ${pageCount}` : ""}
+            </p>
 
-        <div className="mt-6">
-          <ResourceGrid
-            resources={items}
-            section={section}
-            showType={!section}
-            emptyTitle={hasCriteria ? "Aucune ressource ne correspond à votre recherche" : "Aucune ressource pour le moment"}
-            emptyDescription={hasCriteria ? "Vérifiez l'orthographe, essayez un mot plus général ou retirez un filtre." : undefined}
-          />
-        </div>
+            <div className="mt-6">
+              <ResourceGrid
+                resources={items}
+                section={section}
+                showType={!section}
+                emptyTitle={hasCriteria ? "Aucune ressource ne correspond à votre recherche" : "Aucune ressource pour le moment"}
+                emptyDescription={hasCriteria ? "Vérifiez l'orthographe, essayez un mot plus général ou retirez un filtre." : undefined}
+              />
+            </div>
 
-        <div className="mt-14">
-          <Pagination
-            page={page}
-            pageCount={pageCount}
-            basePath="/recherche"
-            searchParams={{ q: query || undefined, type: section, categorie: categorySlug, tri: params.tri }}
-          />
-        </div>
+            <div className="mt-14">
+              <Pagination
+                page={page}
+                pageCount={pageCount}
+                basePath="/recherche"
+                searchParams={{ q: query || undefined, type: section, categorie: categorySlug, tri: params.tri }}
+              />
+            </div>
+          </>
+        )}
       </Container>
     </>
   );
