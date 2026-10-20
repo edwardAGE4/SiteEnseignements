@@ -1,26 +1,30 @@
 import { signOut } from "@/lib/auth";
+import { InstallAppButton } from "@/components/pwa/InstallAppButton";
+
+const ACTION_CLASS =
+  "inline-flex shrink-0 items-center gap-2 rounded-full border border-ink-900/15 px-4 py-2 font-data text-xs font-medium text-ink-700 hover:border-navy-900";
 
 export function AdminHeader({ name, role }: { name: string; role: string }) {
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-ink-900/10 bg-ivory-100 px-4 py-4 sm:px-6 md:px-10">
+    <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-ink-900/10 bg-ivory-100 px-4 py-4 sm:px-6 md:px-10">
       <div className="min-w-0">
         <p className="truncate font-data text-sm font-medium text-navy-900">{name}</p>
         <p className="font-data text-xs text-ink-300">{role === "ADMIN" ? "Administrateur" : "Éditeur"}</p>
       </div>
 
-      <form
-        action={async () => {
-          "use server";
-          await signOut({ redirectTo: "/admin/connexion" });
-        }}
-      >
-        <button
-          type="submit"
-          className="shrink-0 rounded-full border border-ink-900/15 px-4 py-2 font-data text-xs font-medium text-ink-700 hover:border-navy-900"
+      <div className="flex flex-wrap items-center gap-2">
+        <InstallAppButton className={ACTION_CLASS} />
+        <form
+          action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/admin/connexion" });
+          }}
         >
-          Se déconnecter
-        </button>
-      </form>
+          <button type="submit" className={ACTION_CLASS}>
+            Se déconnecter
+          </button>
+        </form>
+      </div>
     </header>
   );
 }

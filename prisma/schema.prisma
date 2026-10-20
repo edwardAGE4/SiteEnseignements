@@ -42,6 +42,11 @@ model User {
   name         String
   role         Role       @default(EDITOR)
   isActive     Boolean    @default(true)
+  /// echecs de connexion consecutifs ; au-dela du seuil, le compte est verrouille temporairement
+  failedLoginCount Int       @default(0)
+  lockedUntil      DateTime?
+  /// incremente a chaque changement sensible (mot de passe, role, desactivation) : les sessions ouvertes sont revoquees
+  sessionVersion   Int       @default(0)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   teachings    Teaching[] @relation("CreatedBy")

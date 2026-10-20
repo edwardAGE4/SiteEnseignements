@@ -2,9 +2,15 @@ import { buttonClassName } from "@/components/ui/Button";
 import { LikeButton } from "@/components/public/Likes";
 import { DownloadIcon, FileIcon } from "@/components/ui/Icons";
 import { formatFileSize } from "@/lib/media";
-import { formatLabel } from "@/lib/file-validation";
+import { fileExtension, formatLabel } from "@/lib/file-validation";
+import { DocumentViewerButton } from "@/components/public/DocumentViewerButton";
 
 type Document = { id: string; fileName: string; mimeType: string | null; sizeBytes: number | null };
+
+/** Seuls les PDF s'affichent dans le lecteur integre. */
+function isPdf(document: Document) {
+  return document.mimeType === "application/pdf" || fileExtension(document.fileName) === "pdf";
+}
 
 /**
  * Fichiers joints a une ressource. Les liens passent par une route du site qui
@@ -35,7 +41,7 @@ export function DocumentList({
       </h2>
       {description ? <p className="mt-1 text-sm text-ink-500">{description}</p> : null}
       {!allowDownload ? (
-        <p className="mt-1 text-sm text-ink-500">Ces fichiers sont proposés en consultation en ligne.</p>
+        <p className="mt-1 text-sm text-ink-500">Ces fichiers se consultent en ligne, sur le site uniquement.</p>
       ) : null}
 
       <ul className="mt-6 divide-y divide-navy-900/10">
@@ -58,10 +64,16 @@ export function DocumentList({
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <a href={href} target="_blank" rel="noopener" className={buttonClassName({ variant: "outline", size: "sm" })}>
-                  Consulter
-                  <span className="sr-only"> {document.fileName} (nouvel onglet)</span>
-                </a>
+                {allowDownload ? (
+                  <a href={href} target="_blank" rel="noopener" className={buttonClassName({ variant: "outline", size: "sm" })}>
+                    Consulter
+                    <span className="sr-only"> {document.fileName} (nouvel onglet)</span>
+                  </a>
+                ) : isPdf(document) ? (
+                  <DocumentViewerButton slug={slug} documentId={document.id} fileName={document.fileName} />
+                ) : (
+                  <p className="text-sm text-ink-500">Consultation en ligne indisponible pour ce format.</p>
+                )}
                 {allowDownload ? (
                   <a href={`${href}&mode=telechargement`} download className={buttonClassName({ variant: "primary", size: "sm" })}>
                     <DownloadIcon className="h-4 w-4" />

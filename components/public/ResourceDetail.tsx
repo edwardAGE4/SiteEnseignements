@@ -4,7 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { RichText } from "@/components/ui/RichText";
 import { buttonClassName } from "@/components/ui/Button";
-import { ExternalIcon, TypeIcon } from "@/components/ui/Icons";
+import { ExternalIcon, TypeIcon, YoutubeIcon } from "@/components/ui/Icons";
 import { Breadcrumbs } from "@/components/public/Breadcrumbs";
 import { AudioPlayer } from "@/components/public/AudioPlayer";
 import { VideoPlayer } from "@/components/public/VideoPlayer";
@@ -205,7 +205,21 @@ export function ResourceDetail({
         <div className="space-y-3">
           <VideoPlayer url={resource.videoUrl} title={resource.title} posterUrl={resource.coverImageUrl} />
           {preview ? null : (
-            <div className="flex justify-end">
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              {video?.provider === "youtube" ? (
+                <>
+                  {/* liker et commenter se font sur YouTube (app sur mobile), avec le compte du visiteur */}
+                  <a href={video.watchUrl} target="_blank" rel="noopener noreferrer" className={buttonClassName({ variant: "outline", size: "sm" })}>
+                    <YoutubeIcon className="h-4 w-4" />
+                    J&apos;aime sur YouTube
+                    <span className="sr-only"> (nouvel onglet)</span>
+                  </a>
+                  <a href={video.watchUrl} target="_blank" rel="noopener noreferrer" className={buttonClassName({ variant: "outline", size: "sm" })}>
+                    Commenter sur YouTube
+                    <span className="sr-only"> (nouvel onglet)</span>
+                  </a>
+                </>
+              ) : null}
               <LikeButton target="youtube" label="la vidéo" />
             </div>
           )}

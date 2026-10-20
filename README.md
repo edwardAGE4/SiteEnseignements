@@ -90,6 +90,55 @@ Blob (le store doit être **public**), avec bascule automatique sur S3 si le
 store est plein. Les fichiers des ressources en brouillon ou archivées ne sont
 jamais servis par la route `/api/enseignements/[slug]/telecharger`.
 
+## Sécurité
+
+- **En-têtes HTTP** (`next.config.ts`) : HSTS, CSP, `X-Frame-Options: DENY`,
+  `nosniff`, COOP, Permissions-Policy restrictive, pas de `X-Powered-By`.
+- **Content-Security-Policy** (`lib/security/csp.ts`) : site public avec une
+  liste blanche stricte (aucun script externe, ni `eval`) ; administration avec
+  un nonce par requête et `strict-dynamic` (`proxy.ts`). Un nouveau service
+  externe (lecteur, stockage…) doit y être ajouté, sinon le navigateur le bloque.
+- **Connexion** (`lib/auth.ts`) : compte verrouillé 15 min après 5 échecs,
+  limite par adresse IP, réponse identique que le compte existe ou non,
+  session de 8 h, compte revérifié en base chaque minute. Changer le mot de
+  passe, le rôle ou désactiver un compte ferme ses sessions ouvertes.
+- **Mots de passe** : 12 caractères minimum.
+- **Routes publiques qui écrivent** (j'aime, vues) : refusées si appelées depuis un autre site.
+- **Dépendances** : `npm audit --omit=dev` doit rester à 0 ; mettre `next` à
+  jour dès qu'un correctif de sécurité est publié.
+
+## Application installable et versions
+
+Le site s'installe sur l'écran d'accueil (manifeste `app/manifest.ts`,
+service worker `public/sw.js`, actif en production uniquement). Une popup
+propose l'installation (Chrome / Edge / Samsung Internet : fenêtre native ;
+iPhone / iPad : marche à suivre), ainsi que le bouton « Installer
+l'application » de l'en-tête admin et de l'accueil mobile.
+
+La version vient **uniquement** du champ `version` de `package.json`.
+`scripts/version.js` la recopie dans `lib/version.ts` (fichier généré) et dans
+`public/sw.js` ; il est lancé automatiquement avant `dev`, `build`,
+`vercel-build` et `start`. Elle s'affiche dans le menu admin et sur la page
+`/admin/a-propos`.
+
+### Publier une nouvelle version
+
+```bash
+npm version patch   # correction
+npm version minor   # nouvelle fonctionnalité
+npm version major   # changement important
+git push --follow-tags   # puis déployer (Vercel déploie au push)
+```
+
+`npm version` met à jour `package.json`, `lib/version.ts` et `public/sw.js`,
+puis crée le commit et le tag (l'arbre Git doit être propre avant).
+
+Les utilisateurs voient le bandeau « La version X est disponible » à leur
+prochaine visite, ou au plus tard 30 minutes après. La page n'est rechargée
+que s'ils cliquent sur « Mettre à jour ». Un déploiement **sans** changement de
+version n'est pas annoncé (le contenu reste à jour : les pages ne sont jamais
+servies depuis le cache).
+
 ## Documentation
 
 Voir [`docs/GUIDE-ADMINISTRATEUR.md`](./docs/GUIDE-ADMINISTRATEUR.md).

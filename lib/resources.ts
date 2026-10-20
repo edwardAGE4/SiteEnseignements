@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { Prisma, ResourceType } from "@/generated/prisma/client";
-import { SECTION_LIST, TYPE_TO_SECTION, type ResourceSort, type Section } from "@/lib/sections";
+import { SECTION_LIST, SECTIONS, TYPE_TO_SECTION, type ResourceSort, type Section } from "@/lib/sections";
 
 export * from "@/lib/sections";
 
@@ -93,6 +93,8 @@ export type ResourceListParams = {
   query?: string;
   categorySlugs?: string[];
   series?: string;
+  /** uniquement les ressources rattachees a aucune categorie */
+  uncategorized?: boolean;
   sort?: ResourceSort;
   page?: number;
   pageSize?: number;
@@ -110,6 +112,7 @@ export async function listResources(params: ResourceListParams) {
     and.push({ categories: { some: { category: { slug: { in: params.categorySlugs } } } } });
   }
   if (params.series) and.push({ series: params.series });
+  if (params.uncategorized) and.push({ categories: { none: {} } });
 
   const where: Prisma.TeachingWhereInput = { AND: and };
 
@@ -225,6 +228,33 @@ export async function listCategoriesInUse(section?: Section) {
     imageUrl: category.imageUrl,
     resourceCount: category._count.teachings,
   }));
+}
+
+export const SHELF_SIZE = 12;
+
+/**
+ * Rangees d'une rubrique, une par categorie (ordre de l'administration), avec
+ * les ressources les plus recentes ; les ressources sans categorie forment une
+ * derniere rangee « Autres ». Une ressource a plusieurs categories apparait
+ * dans chacune.
+ */
+export async function listResourceShelves(section: Section) {
+  const categories = await listCategoriesInUse(section);
+
+  const [shelves, others] = await Promise.all([
+    Promise.all(
+      categories.map(async (category) => {
+        const { items, total } = await listResources({ section, categorySlugs: [category.slug], pageSize: SHELF_SIZE });
+        return { slug: category.slug as string | null, name: category.name, description: category.description, items, total };
+      }),
+    ),
+    listResources({ section, uncategorized: true, pageSize: SHELF_SIZE }),
+  ]);
+
+  if (others.total > 0) {
+    shelves.push({ slug: null, name: categories.length > 0 ? "Autres" : SECTIONS[section].allLabel, description: null, items: others.items, total: others.total });
+  }
+  return shelves.filter((shelf) => shelf.total > 0);
 }
 
 /** Nombre de ressources publiques par rubrique + derniere couverture disponible. */

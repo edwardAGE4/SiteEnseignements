@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { LEGAL_LINKS, NAV_LINKS, SITE_NAME } from "@/lib/site";
 import { getSiteIdentitySafe } from "@/lib/settings";
+import { InstagramIcon, YoutubeIcon } from "@/components/ui/Icons";
 
 export async function Footer() {
   const identity = await getSiteIdentitySafe();
@@ -25,8 +26,10 @@ export async function Footer() {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-10 items-center rounded-full border border-ivory-100/20 px-4 text-sm text-ivory-100/85 transition-colors hover:border-gold-400 hover:text-gold-300"
+                    className="inline-flex min-h-10 items-center gap-2 rounded-full border border-ivory-100/20 px-4 text-sm text-ivory-100/85 transition-colors hover:border-gold-400 hover:text-gold-300"
                   >
+                    {social.key === "socialInstagram" ? <InstagramIcon className="h-4 w-4" /> : null}
+                    {social.key === "socialYoutube" ? <YoutubeIcon className="h-4 w-4" /> : null}
                     {social.label}
                     <span className="sr-only"> (nouvel onglet)</span>
                   </a>

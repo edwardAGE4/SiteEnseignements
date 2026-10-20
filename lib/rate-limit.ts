@@ -3,6 +3,19 @@
  * Suffisant pour freiner les rafraichissements abusifs sur les compteurs
  * de vues/telechargements sans dependance externe (Redis, etc.).
  */
+/**
+ * Adresse IP du visiteur. Sur Vercel, x-real-ip est pose par la plateforme ;
+ * sinon le premier element de x-forwarded-for (les suivants peuvent etre
+ * ajoutes par le client et ne sont jamais utilises).
+ */
+export function clientIp(headers: Headers): string {
+  return (
+    headers.get("x-real-ip")?.trim() ||
+    headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "anonymous"
+  );
+}
+
 const hits = new Map<string, number>();
 
 const WINDOW_MS = 5 * 60 * 1000;

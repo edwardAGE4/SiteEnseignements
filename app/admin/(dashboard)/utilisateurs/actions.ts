@@ -79,13 +79,23 @@ export async function updateUser(
     return { error: "Vous ne pouvez pas retirer vos propres droits d'administrateur." };
   }
 
+  const before = await prisma.user.findUnique({ where: { id }, select: { role: true, isActive: true } });
+  if (!before) return { error: "Utilisateur introuvable." };
+
+  // Mot de passe, role ou desactivation modifies : les sessions ouvertes de ce compte sont revoquees
+  const sensitive =
+    Boolean(parsed.data.password) || before.role !== parsed.data.role || before.isActive !== parsed.data.isActive;
+
   await prisma.user.update({
     where: { id },
     data: {
       name: parsed.data.name,
       role: parsed.data.role,
       isActive: parsed.data.isActive,
-      ...(parsed.data.password ? { passwordHash: await bcrypt.hash(parsed.data.password, 12) } : {}),
+      ...(parsed.data.password
+        ? { passwordHash: await bcrypt.hash(parsed.data.password, 12), failedLoginCount: 0, lockedUntil: null }
+        : {}),
+      ...(sensitive ? { sessionVersion: { increment: 1 } } : {}),
     },
   });
 

@@ -71,10 +71,12 @@ export function UserForm({
           <PasswordInput
             name="password"
             required={mode === "create"}
-            minLength={8}
+            minLength={12}
+            maxLength={72}
             autoComplete="new-password"
             className={inputClass}
           />
+          <p className="text-xs text-ink-500">12 caractères minimum. Une phrase de plusieurs mots est idéale.</p>
           {state?.fieldErrors?.password ? <p className="text-xs text-red-600">{state.fieldErrors.password}</p> : null}
         </div>
       </div>

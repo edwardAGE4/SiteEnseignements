@@ -4,6 +4,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { getSiteUrl } from "@/lib/site-url";
 import { SITE_NAME } from "@/lib/site";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { UpdateBanner } from "@/components/pwa/UpdateBanner";
 
 // Titres, navigation et boutons : Satoshi (Fontshare, licence libre), auto-hebergee
 const satoshi = localFont({
@@ -36,6 +38,16 @@ export const metadata: Metadata = {
   },
   description: DEFAULT_DESCRIPTION,
   applicationName: SITE_NAME,
+  // Installation sur l'ecran d'accueil (iOS) ; le manifeste vient de app/manifest.ts
+  // et l'icone Apple (180 px) de app/apple-icon.png.
+  appleWebApp: {
+    capable: true,
+    title: SITE_NAME,
+    statusBarStyle: "default",
+  },
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+  },
   authors: [{ name: SITE_NAME }],
   openGraph: {
     type: "website",
@@ -62,7 +74,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       data-scroll-behavior="smooth"
       className={`${satoshi.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        {children}
+        <InstallPrompt />
+        <UpdateBanner />
+      </body>
     </html>
   );
 }

@@ -1,5 +1,8 @@
 import { z } from "zod";
 import { SOCIAL_NETWORKS } from "@/lib/social";
+import { BIOGRAPHY_LIMITS } from "@/lib/validations/biography-limits";
+
+export { BIOGRAPHY_LIMITS };
 
 const text = (max: number, label: string) =>
   z
@@ -7,8 +10,6 @@ const text = (max: number, label: string) =>
     .trim()
     .max(max, `${label} : ${max} caractères maximum.`)
     .transform((value) => value.replace(/\r\n/g, "\n"));
-
-export const BIOGRAPHY_LIMITS = { title: 160, lead: 600, body: 20000, approach: 8000, quote: 400, quoteSource: 120 };
 
 // Tous les champs sont facultatifs : une section vide est masquee sur le site.
 export const biographySchema = z.object({

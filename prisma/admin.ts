@@ -79,8 +79,17 @@ async function createAdmin() {
   await prisma.user.upsert({
     where: { email },
     create: { email, name, passwordHash, role: "ADMIN" },
-    // compte existant : promu administrateur, reactive, mot de passe remplace
-    update: { name, passwordHash, role: "ADMIN", isActive: true },
+    // compte existant : promu administrateur, reactive, deverrouille, mot de passe
+    // remplace et sessions ouvertes revoquees
+    update: {
+      name,
+      passwordHash,
+      role: "ADMIN",
+      isActive: true,
+      failedLoginCount: 0,
+      lockedUntil: null,
+      sessionVersion: { increment: 1 },
+    },
   });
 
   console.log(

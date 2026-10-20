@@ -99,6 +99,60 @@ export function DownloadIcon({ className }: IconProps) {
   );
 }
 
+export function InstagramIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function YoutubeIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M2.5 12c0-2.9.2-4.6.5-5.5a2.5 2.5 0 0 1 1.8-1.7C6.3 4.4 9 4.3 12 4.3s5.7.1 7.2.5a2.5 2.5 0 0 1 1.8 1.7c.3.9.5 2.6.5 5.5s-.2 4.6-.5 5.5a2.5 2.5 0 0 1-1.8 1.7c-1.5.4-4.2.5-7.2.5s-5.7-.1-7.2-.5A2.5 2.5 0 0 1 3 17.5c-.3-.9-.5-2.6-.5-5.5Z" />
+      <path d="m10 9 5 3-5 3V9Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function ChevronRightIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="m9 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+/** Bouton « Partager » d'iOS (carre et fleche vers le haut). */
+export function ShareIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M12 15V3m0 0L8 7m4-4 4 4M8 10H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-2" />
+    </svg>
+  );
+}
+
+export function CloseIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  );
+}
+
+/** Icone neutre (application), utilisee quand un logo ne se charge pas. */
+export function AppIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <rect x="4" y="4" width="16" height="16" rx="4" />
+      <path d="M9 12h6M12 9v6" />
+    </svg>
+  );
+}
+
 export function ExternalIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>

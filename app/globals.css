@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Theme sombre : active par une classe .dark ou data-theme="dark" sur <html>
+   (le site n'a qu'un theme clair aujourd'hui). Utilise par le logo Solutione. */
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   /* Bleu nuit - couleur identitaire principale */
   --color-navy-950: #0e1b2c;
@@ -273,4 +277,11 @@ input[type="range"].range::-moz-range-thumb {
   border-radius: 9999px;
   background: var(--range-fill, var(--color-navy-900));
   border: 2px solid #fff;
+}
+
+/* Lecteur de documents en consultation seule : jamais imprime */
+@media print {
+  .pdf-viewer {
+    display: none !important;
+  }
 }

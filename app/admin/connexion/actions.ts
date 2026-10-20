@@ -5,6 +5,12 @@ import { signIn } from "@/lib/auth";
 
 export type LoginState = { error?: string } | undefined;
 
+/** Destination apres connexion : uniquement une page de l'administration (pas de redirection vers un autre site). */
+function safeCallbackUrl(value: FormDataEntryValue | null): string {
+  const url = typeof value === "string" ? value : "";
+  return /^\/admin(\/[\w\-/]*)?$/.test(url) ? url : "/admin";
+}
+
 export async function authenticate(
   _prevState: LoginState,
   formData: FormData,
@@ -13,7 +19,7 @@ export async function authenticate(
     await signIn("credentials", {
       email: formData.get("email"),
       password: formData.get("password"),
-      redirectTo: (formData.get("callbackUrl") as string) || "/admin",
+      redirectTo: safeCallbackUrl(formData.get("callbackUrl")),
     });
   } catch (error) {
     if (error instanceof AuthError) {

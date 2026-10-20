@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { exceedsRate } from "@/lib/rate-limit";
+import { clientIp, exceedsRate } from "@/lib/rate-limit";
+import { isSameOriginRequest } from "@/lib/security/request";
 
 /**
  * "J'aime" anonymes sur les medias d'un enseignement.
@@ -60,6 +61,10 @@ export async function GET(request: NextRequest, context: Context) {
 }
 
 export async function POST(request: NextRequest, context: Context) {
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ error: "Requête refusée." }, { status: 403 });
+  }
+
   const { slug } = await context.params;
   const body = (await request.json().catch(() => null)) as { target?: unknown } | null;
   const target = typeof body?.target === "string" ? body.target : "";
@@ -72,7 +77,7 @@ export async function POST(request: NextRequest, context: Context) {
 
   const existingVisitorId = request.cookies.get(VISITOR_COOKIE)?.value;
   const visitorId = existingVisitorId ?? randomUUID();
-  const ip = request.headers.get("x-forwarded-for") ?? "anonymous";
+  const ip = clientIp(request.headers);
 
   if (exceedsRate(`like:${ip}`, 30, 60_000)) {
     return NextResponse.json({ error: "Trop de clics, patientez un instant." }, { status: 429 });

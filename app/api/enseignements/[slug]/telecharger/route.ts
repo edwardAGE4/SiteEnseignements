@@ -1,14 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { isRateLimited } from "@/lib/rate-limit";
+import { clientIp, isRateLimited } from "@/lib/rate-limit";
 import { backendForUrl, getRemoteFileUrl, readLocalFile } from "@/lib/storage";
 import { fileExtension, UPLOAD_RULES } from "@/lib/file-validation";
 
 /**
  * Sert un fichier joint a une ressource publiee (?doc=<id>) depuis le domaine du site.
  * - par defaut : consultation dans le navigateur (inline)
- * - ?mode=telechargement : telechargement (attachment), seulement si la
- *   politique de la ressource l'autorise
+ * - ?mode=telechargement : telechargement (attachment)
+ * Ressources en consultation seule (VIEW_ONLY) : refuse, voir la route /consulter.
  * Les ressources en brouillon ou archivees ne servent aucun fichier.
  * En stockage local, le fichier est relu cote serveur ; en stockage distant,
  * redirection vers le fichier.
@@ -40,9 +40,18 @@ export async function GET(
     return NextResponse.json({ error: "Ce fichier n'est pas disponible." }, { status: 404 });
   }
 
-  const download = request.nextUrl.searchParams.get("mode") === "telechargement" && resource.downloadPolicy === "DOWNLOAD";
+  // Consultation seule : le fichier n'est jamais servi tel quel (ni lien direct,
+  // ni lecteur du navigateur) ; il se lit dans le lecteur integre (route /consulter).
+  if (resource.downloadPolicy !== "DOWNLOAD") {
+    return NextResponse.json(
+      { error: "Ce document se consulte uniquement depuis la page de la ressource." },
+      { status: 403 },
+    );
+  }
 
-  const ip = request.headers.get("x-forwarded-for") ?? "anonymous";
+  const download = request.nextUrl.searchParams.get("mode") === "telechargement";
+
+  const ip = clientIp(request.headers);
   if (!isRateLimited(`telechargement:${ip}:${slug}:${documentId ?? ""}`, 10_000)) {
     await prisma.teaching
       .update({ where: { id: resource.id }, data: { downloadCount: { increment: 1 } } })

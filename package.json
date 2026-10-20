@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/version.js",
     "dev": "next dev",
+    "prebuild": "node scripts/version.js",
     "build": "prisma generate && next build",
+    "prevercel-build": "node scripts/version.js",
     "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "prestart": "node scripts/version.js",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
@@ -14,7 +18,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:admins": "tsx prisma/admin.ts",
     "db:create-admin": "tsx prisma/admin.ts --create",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "version": "node scripts/version.js && git add lib/version.ts public/sw.js"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -27,8 +32,9 @@
     "@vercel/blob": "^2.8.0",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
-    "next": "16.3.5",
+    "next": "16.4.2",
     "next-auth": "^5.0.0-beta.32",
+    "pdfjs-dist": "^6.4.299",
     "pg": "^8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -43,7 +49,7 @@
     "@types/react-dom": "^19",
     "dotenv": "^17.4.2",
     "eslint": "^9",
-    "eslint-config-next": "16.3.5",
+    "eslint-config-next": "16.4.2",
     "prisma": "^7.10.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",

@@ -523,7 +523,7 @@ export function ResourceForm({
           <Field name="downloadPolicy" label="Politique de téléchargement" error={errors.downloadPolicy}>
             <select id="downloadPolicy" name="downloadPolicy" defaultValue={defaults.downloadPolicy} className={inputClass}>
               <option value="DOWNLOAD">Consultation et téléchargement autorisés</option>
-              <option value="VIEW_ONLY">Consultation en ligne uniquement (pas de bouton Télécharger)</option>
+              <option value="VIEW_ONLY">Consultation sur le site uniquement (PDF, lecteur intégré sans téléchargement)</option>
             </select>
           </Field>
         </div>

@@ -2,7 +2,7 @@
 
 import { useActionState, useRef, useState } from "react";
 import { submitWithoutReset } from "@/lib/form";
-import { BIOGRAPHY_LIMITS } from "@/lib/validations/biography";
+import { BIOGRAPHY_LIMITS } from "@/lib/validations/biography-limits";
 import { saveBiography } from "@/app/admin/(dashboard)/parametres/actions";
 import type { Biography } from "@/lib/settings";
 import { FormAlerts } from "@/components/ui/Alert";
