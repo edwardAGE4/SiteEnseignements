@@ -66,10 +66,11 @@ export function ResourceVisual({
       >
         <TypeIcon type={resource.type} className="h-[40cqw] w-[40cqw] text-gold-300/80 @[7rem]:hidden" />
         <div className="hidden min-w-0 @[7rem]:block">
-          <p className="font-display text-[clamp(7px,4.6cqw,13px)] font-medium uppercase tracking-[0.25em] text-gold-300/85">
+          <p className="font-cover text-[clamp(7px,4.2cqw,12px)] font-medium uppercase tracking-[0.22em] text-gold-300/85">
             {label}
           </p>
-          <p className="mt-[4cqw] line-clamp-4 font-display text-[clamp(11px,9cqw,30px)] font-bold uppercase leading-[1.15] break-words text-white">
+          {/* 2 lignes maximum, puis « … » */}
+          <p className="mt-[4cqw] line-clamp-2 font-cover text-[clamp(10px,8cqw,26px)] font-semibold uppercase leading-[1.2] break-words text-white">
             {resource.title}
           </p>
         </div>

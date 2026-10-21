@@ -13,4 +13,5 @@ export const NAV_LINKS = [
 
 export const LEGAL_LINKS = [
   { href: "/confidentialite", label: "Politique de confidentialité" },
+  { href: "/version", label: "Version et mises à jour" },
 ] as const;

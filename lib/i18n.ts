@@ -10,9 +10,11 @@ const fr = {
   about: {
     navLabel: "À propos",
     metaTitle: "À propos de l'application",
+    publicTitle: "Version et mises à jour",
+    publicDescription: "Version du site, recherche de mise à jour et informations sur Solutione, qui l'a conçu et développé.",
     logoAlt: "Logo de {app}",
     description:
-      "L'espace média de Jean-Marc GNALI : des ressources gratuites en audio, vidéo, livres et fichiers pratiques, administrées depuis cet espace.",
+      "L'espace média de Jean-Marc GNALI : des ressources gratuites en audio, vidéo, livres et fichiers pratiques.",
     versionBadge: "Version {version}",
     checkUpdate: "Rechercher une mise à jour",
     checking: "Recherche en cours…",
