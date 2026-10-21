@@ -35,9 +35,17 @@ function countLabel(total: number) {
   return `${total} ${total > 1 ? "ressources" : "ressource"}`;
 }
 
-/** Publiee depuis moins de 14 jours : badge « NOUVEAU ». */
+/**
+ * Arrivee sur le site il y a moins de 14 jours : badge « NOUVEAU ».
+ * Date d'arrivee = la plus recente entre l'ajout et la publication (une
+ * ressource ancienne ajoutee aujourd'hui avec une date de publication passee
+ * est bien nouvelle ; un brouillon publie aujourd'hui aussi).
+ */
 function isNew(resource: ResourceCardData) {
-  return Boolean(resource.publishedAt && Date.now() - resource.publishedAt.getTime() < NEW_FOR_MS);
+  const arrival = Math.max(resource.createdAt.getTime(), resource.publishedAt?.getTime() ?? 0);
+  const age = Date.now() - arrival;
+  // publication programmee (date future) : pas encore visible, donc pas de badge
+  return age >= 0 && age < NEW_FOR_MS;
 }
 
 /** Vignette d'une rangee : visuel + titre, toute la vignette est cliquable. */

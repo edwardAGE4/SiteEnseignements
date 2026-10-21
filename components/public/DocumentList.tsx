@@ -64,13 +64,19 @@ export function DocumentList({
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                {allowDownload ? (
+                {/* PDF : lecteur integre (jamais hors du site, ce qui relancait l'application installee) */}
+                {isPdf(document) ? (
+                  <DocumentViewerButton
+                    slug={slug}
+                    documentId={document.id}
+                    fileName={document.fileName}
+                    allowDownload={allowDownload}
+                  />
+                ) : allowDownload ? (
                   <a href={href} target="_blank" rel="noopener" className={buttonClassName({ variant: "outline", size: "sm" })}>
                     Consulter
                     <span className="sr-only"> {document.fileName} (nouvel onglet)</span>
                   </a>
-                ) : isPdf(document) ? (
-                  <DocumentViewerButton slug={slug} documentId={document.id} fileName={document.fileName} />
                 ) : (
                   <p className="text-sm text-ink-500">Consultation en ligne indisponible pour ce format.</p>
                 )}

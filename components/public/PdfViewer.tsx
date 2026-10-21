@@ -1,18 +1,36 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import { CloseIcon } from "@/components/ui/Icons";
+import { CloseIcon, DownloadIcon } from "@/components/ui/Icons";
 import { cn } from "@/lib/utils";
 
+/** Entree d'historique du lecteur ouvert : le bouton « retour » ferme le lecteur. */
+const VIEWER_HASH = "#document";
+
 /**
- * Lecteur PDF integre, en plein ecran, pour les documents en consultation
- * seule : les pages sont dessinees en images (pdf.js), sans bouton
- * Telecharger ni Imprimer, clic droit et selection desactives. Le fichier
- * arrive par morceaux depuis /api/enseignements/[slug]/consulter.
- * Frein au telechargement, pas une protection absolue (captures d'ecran...).
+ * Lecteur PDF integre, en plein ecran : les pages sont dessinees en images
+ * (pdf.js) et le fichier arrive par morceaux depuis
+ * /api/enseignements/[slug]/consulter. Le document reste dans le site, y
+ * compris dans l'application installee (un PDF ouvert hors du site n'a pas
+ * de bouton retour et relancait l'application).
+ * - `protect` (consultation seule) : ni telechargement ni impression, clic
+ *   droit et selection desactives. Frein, pas une protection absolue.
+ * - `downloadHref` : bouton Telecharger dans la barre d'outils.
  */
-export function PdfViewer({ src, title, onClose }: { src: string; title: string; onClose: () => void }) {
+export function PdfViewer({
+  src,
+  title,
+  onClose,
+  protect = true,
+  downloadHref,
+}: {
+  src: string;
+  title: string;
+  onClose: () => void;
+  protect?: boolean;
+  downloadHref?: string;
+}) {
   const [pdf, setPdf] = useState<PDFDocumentProxy | null>(null);
   const [error, setError] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -42,30 +60,48 @@ export function PdfViewer({ src, title, onClose }: { src: string; title: string;
     };
   }, [src]);
 
+  // Bouton / geste « retour » (Android, iPhone, navigateur) : ferme le lecteur au
+  // lieu de quitter la page. L'ouverture ajoute une entree a l'historique.
+  useEffect(() => {
+    // l'etat courant est recopie : le routeur de Next y retrouve ses donnees (sinon il recharge la page)
+    if (window.location.hash !== VIEWER_HASH) window.history.pushState(window.history.state, "", VIEWER_HASH);
+    const onPop = () => {
+      if (window.location.hash !== VIEWER_HASH) onClose();
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [onClose]);
+
+  // Fermeture par le bouton ou Echap : on retire l'entree d'historique (ce qui ferme le lecteur)
+  const requestClose = useCallback(() => {
+    if (window.location.hash === VIEWER_HASH) window.history.back();
+    else onClose();
+  }, [onClose]);
+
   // Fenetre modale : Echap pour fermer, pas de defilement de la page dessous
   useEffect(() => {
     closeRef.current?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-      // Ctrl+S / Ctrl+P : pas d'enregistrement ni d'impression depuis le lecteur
-      if ((event.ctrlKey || event.metaKey) && ["s", "p"].includes(event.key.toLowerCase())) event.preventDefault();
+      if (event.key === "Escape") requestClose();
+      // Ctrl+S / Ctrl+P : pas d'enregistrement ni d'impression d'un document protege
+      if (protect && (event.ctrlKey || event.metaKey) && ["s", "p"].includes(event.key.toLowerCase())) event.preventDefault();
     };
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKey);
     };
-  }, [onClose]);
+  }, [requestClose, protect]);
 
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
-      className="pdf-viewer fixed inset-0 z-[70] flex flex-col bg-navy-950/95 select-none"
-      onContextMenu={(event) => event.preventDefault()}
+      className={cn("fixed inset-0 z-[70] flex flex-col bg-navy-950/95", protect && "pdf-viewer select-none")}
+      onContextMenu={protect ? (event) => event.preventDefault() : undefined}
     >
       <div className="flex items-center gap-3 border-b border-ivory-100/10 px-4 py-3 text-ivory-100 sm:px-6">
         <p id={titleId} className="min-w-0 flex-1 truncate font-display text-sm font-semibold sm:text-base">
@@ -81,10 +117,20 @@ export function PdfViewer({ src, title, onClose }: { src: string; title: string;
             +
           </ToolbarButton>
         </div>
+        {downloadHref ? (
+          <a
+            href={downloadHref}
+            download
+            aria-label="Télécharger le document"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full hover:bg-ivory-100/10"
+          >
+            <DownloadIcon className="h-5 w-5" />
+          </a>
+        ) : null}
         <button
           ref={closeRef}
           type="button"
-          onClick={onClose}
+          onClick={requestClose}
           aria-label="Fermer le document"
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full hover:bg-ivory-100/10"
         >
